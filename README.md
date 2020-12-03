@@ -54,11 +54,12 @@ Chromosome number (i.e. chr1) | Starting position of the peak | Ending position 
    + `ChIPpeakAnno`: to plot the Venn diagrams of the overlapping ChIP peaks
    + `cowplot`
    + `ggpubr`
-   + `circlize` <br>
+   + `circlize` <br><br>
    
 
 ## To do
 
+* Include download options for lists and plots.
 * Modify the pipelines to create the desired input (one rule).
 * Modify chipseq input file to include more columns regarding the condition (implies modifying the pipeline):
 
