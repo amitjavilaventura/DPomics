@@ -68,6 +68,8 @@ Chromosome number (i.e. chr1) | Starting position of the peak | Ending position 
   + Include, a part of the existing `condition`, a `protein` column with the name of the prot for each observation. This is to stablish a `facet_wrap()` in the ggplots so they will be preetier.
   
 * Integrate RNAseq and ChIPseq data.
+* Change the theme with `shinyThemes`.
+* Make a Desktop app with `photon`.
 
 ## CRAZY ideas
 
