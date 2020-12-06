@@ -30,7 +30,7 @@ server <- function(input, output) {
                      choices = contrasts, selected = NULL, multiple = T, 
                      options = list(placeholder = "Select the contrasts..."))
     })
-    output$volcano_contrasts_list <- renderText({ paste(input$rna_contrasts, sep = ";") })
+    #output$volcano_contrasts_list <- renderText({ paste(input$rna_contrasts, sep = ";") })
     
     # plot volcaons
     observeEvent(eventExpr = input$plot_volcano, {
@@ -69,7 +69,6 @@ server <- function(input, output) {
     
     # render verbatimTextOutputs rna_contrast1_list rna_contrast2_list
     output$rna_contrast1_list <- renderPrint({ print(input$rna_overlap1_contrasts) })
-    
     output$rna_contrast2_list <- renderPrint({ print(input$rna_overlap2_contrasts) })
     
     # plot venn diagrams 1
@@ -97,7 +96,7 @@ server <- function(input, output) {
           list[[i]] <- x$Geneid
         }
         colors <- rainbow(n = length(input$contrastDegs1), alpha = 0.6)
-        cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = input$contrastDegs1, fill = colors))
+        cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs1), fill = colors))
       })
       
       ## downregulated genes
@@ -195,5 +194,77 @@ server <- function(input, output) {
     }) # observe event actionButton heatmap
         
   }) # observeEvent end (submit_rna file)
+  
+  
+  ### ----- CHIP-SEQ STUFF ----- ###  
+  output$chipseq_inputFile <- renderPrint({ input$chip_input$name })
+
+  observeEvent(eventExpr = input$submit_chip, {
+    
+    # read peaks file
+    chip_data <- reactive({ read.delim(input$chip_input$datapath) })
+    
+    ### EXPLORATION TAB ----------------------------------------------------------------------------------------------------
+    # dataTable for exploration
+    output$chip_dataTable <- DT::renderDataTable({
+      peaks <- chip_data()
+      DT::datatable(data = peaks,  options = list(lengthMenu = c(5, 10, 20, 30, 50), pageLength = 10))
+    })
+    
+    ### PEAKS TAB ----------------------------------------------------------------------------------------------------------
+    observeEvent(eventExpr = input$generate_chipPeaks, {
+      # plot number of peaks
+      output$chip_peaks <- renderPlot({
+        peaks <- chip_data()
+        peakNum(data = peaks, legend_position = input$chip_peaks_legend, pannel = input$chip_peaks_pannel)
+      })
+    }) # ovserveEvent end (actionButton generate_peaks)
+    
+    ### ANNOTATION TAB -----------------------------------------------------------------------------------------------------
+    observeEvent(eventExpr = input$generate_chipAnno, {
+      # plot distribution of peaks
+      output$chip_anno <- renderPlot({
+        peaks <- chip_data()
+        barAnno(data = peaks, names = peaks$samples %>% unique(), pannel = input$chip_anno_pannel,
+                anno_num = input$chip_numRegions, peak_type = input$chip_anno_type, palette = "Set2", ylab = paste(input$chip_anno_type, "of peaks"))
+      })
+    }) # ovserveEvent end (actionButton generate_barAnno)
+    
+    ### INTERSECTION TAB ---------------------------------------------------------------------------------------------------
+    # get selectInputs for conditions to intersect
+    output$ui_chip_intersect1 <- renderUI({
+      peaks <- chip_data()
+      samples <- peaks$samples %>% unique
+      selectizeInput(inputId = "chip_conditions1", label = "Select the conditions to overlap the peaks",
+                     choices = samples, selected = NULL, multiple = T, 
+                     options = list(maxItems = 4, placeholder = "Select between 2 and 3 conditions"))
+    })
+    output$chip_cond_list1 <- renderPrint({ paste(input$chip_conditions1, sep = "; ") })
+    
+    output$ui_chip_intersect2 <- renderUI({
+      peaks <- chip_data()
+      samples <- peaks$samples %>% unique
+      selectizeInput(inputId = "chip_conditions2", label = "Select the conditions to overlap the peaks",
+                     choices = samples, selected = NULL, multiple = T, 
+                     options = list(maxItems = 4, placeholder = "Select between 2 and 3 conditions"))
+    })
+    
+    output$chip_cond_list2 <- renderPrint({ paste(input$chip_conditions2, sep = "; ") })
+    
+    # plot intersections
+    observeEvent(eventExpr = input$generate_chip_intersection1, {
+      output$chip_intersect1 <- renderPlot({
+        peaks <- chip_data()
+        intersectPeaks(peaks = peaks, conditions = input$chip_conditions1)
+      })
+    })
+    
+    observeEvent(eventExpr = input$generate_chip_intersection2, {
+      output$chip_intersect2 <- renderPlot({
+        peaks <- chip_data()
+        intersectPeaks(peaks = peaks, conditions = input$chip_conditions2)
+      })
+    })
+  }) #observeEvent submit chip end
   
 } ## SERVER FUNCTION END

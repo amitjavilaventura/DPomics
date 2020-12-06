@@ -2,27 +2,26 @@
 ### DPomics USER INTERFACE
 ### ======================================================================
 
-
 ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPomics", skin = "blue",
                     sidebar = dashboardSidebar(
                       sidebarMenu(id = "menu",
                         br(),
                         menuItem(text = "Home", tabName = "home", icon = icon(name = "home", lib = "font-awesome")),
-                        #menuItem(text = "Load data", tabName = "inputs", icon = icon(name = "file", lib = "font-awesome")),
                         menuItem(text = "RNA-seq", tabName = "rnaseq", icon = icon(name = "dna", lib = "font-awesome")),
                         menuItem(text = "ChIP-seq", tabName = "chipseq", icon = icon(name = "dna", lib = "font-awesome")),
                         #menuItem(text = "Enhancers", tabName = "enhancers", icon = icon(name = "dna", lib = "font-awesome")), #not available yet
                         #menuItem(text = "ATAC-seq", tabName = "atacseq", icon = icon(name = "dna", lib = "font-awesome")), #not available yet
-                        menuItem(text = "Integration", tabName = "integration", icon = icon(name = "dna", lib = "font-awesome")),
+                        menuItem(text = "Integration", tabName = "integration", icon = icon(name = "dna", lib = "font-awesome"),
+                          menuSubItem(text = "RNA-seq + ChIP-seq", tabName = "rna_chip")),
                         hr(),
-                        menuItem(text = "Code", icon = icon(name = "code", lib = "font-awesome")))),
+                        menuItem(text = "Code", href = "https://github.com/amitjavilaventura/DPomics", icon = icon(name = "code", lib = "font-awesome")))),
                     body = dashboardBody(
                       tabItems(
                         tabItem(tabName = "home",
-                          tabsetPanel(id = "home_tabset",
+                          HTML('<center><p style="font-size:60px;font-family:Helvetica;color:black;"><img src="DPomics_logo.png" width="300px">Welcome to DPomics!</p></center>'),
+                          HTML("<hr style='border-color:black'>"),
+                          tabsetPanel(id = "home_tabset", type = "pills", 
                                   tabPanel(title = "Welcome",
-                                    HTML('<center><p style="font-size:60px;font-family:Helvetica;color:black;"><img src="DPomics_logo.png" width="300px">Welcome to DPomics!</p></center>'),
-                                    HTML("<hr style='border-color:black'>"),
                                     h1("General information"),
                                     br(),
                                     h2("Goal"),
@@ -37,35 +36,16 @@ ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPo
                                   tabPanel(title = "Instructions") # instructions tab end
                                 )), # home tab end
                         
-                        #tabItem(tabName = "inputs",
-                        #    br(),
-                        #    splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
-                        #      box(title = "RNA-seq inputs", id = "rna_inputs_box", height = "300px", width = 12,
-                        #          helpText("Select the input for the RNAseq data visualization and click to 'Upload'."),
-                        #          fileInput(inputId = "rnaseq_input", label = "Select the input file (degs)", placeholder = "Select a file..."),
-                        #          verbatimTextOutput(outputId = "rnaseq_inputFile", placeholder = T),
-                        #          actionButton(inputId = "submit_rna", label = "Upload")),
-                        #      box(title = "RNAseq thresholds", id = "rna_params_box", height = "300px", width = 12,
-                        #      helpText("Select the thresholds for log2FC and adjusted p-value"),
-                        #      sliderInput(inputId = "rna_log2fc", label = "Select a log2FC threshold", min = 0, max = 3, value = 1.5, step = 0.5, ticks = T),
-                        #      sliderInput(inputId = "rna_padj", label = "Select an adjusted p-value threshold", min = 0, max = 0.05, value = 0.1, ticks = T))),
-                                
-                        #     br(),
-                        #     box(title = "ChIP-seq inputs", id = "chip_inputs_box", height = "300px", width = 12,
-                        #     helpText("Select the input for the ChIP-seq data visualization and click to 'Upload'."),
-                        #     fileInput(inputId = "rnaseq_input", label = "Select the input file (degs)", placeholder = "Select a file..."),
-                        #     verbatimTextOutput(outputId = "rnaseq_inputFile", placeholder = T),
-                        #     actionButton(inputId = "submit_rna", label = "Upload"))),
-                        
                         ### RNASEQ TAB ------------------------------------------------------------------------------------------------------------------------
                         tabItem(tabName = "rnaseq",
-                            h4("RNA-seq"),
-                            tabsetPanel(id = "rnaseq_tabset",
+                            h3("RNA-seq"),
+                            tabsetPanel(id = "rnaseq_tabset", type = "pills",
+                                # EXPLORE THE DATA
                                 tabPanel(title = "Upload & explore", value = "explore", br(),
                                          splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
                                                      box(title = "RNA-seq inputs", id = "rna_inputs_box", height = "300px", width = 12, collapsible = T, collapsed = F,
                                                          helpText("Select the input for the RNAseq data visualization and click to 'Upload'."),
-                                                         fileInput(inputId = "rnaseq_input", label = "Select the input file (degs)", placeholder = "Select a file..."),
+                                                         fileInput(inputId = "rnaseq_input", label = "Browse", placeholder = "Select a file..."),
                                                          verbatimTextOutput(outputId = "rnaseq_inputFile", placeholder = T),
                                                          actionButton(inputId = "submit_rna", label = "Upload")),
                                                      box(title = "DE thresholds", id = "rna_thresholds", height = "300px", width = 12, collapsible = T, collapsed = F,
@@ -79,15 +59,16 @@ ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPo
                                           helpText("This is a data table with all the DE information. Write a gene inside the search box to see its DE data in all contrasts."),
                                           DT::dataTableOutput("rna_dataTable"))),
                                 
+                                # VOLCANO PLOTS
                                 tabPanel(title = "Volcano plots", value = "volcanos", br(),
                                          ## PARAMS VOLCANOS
                                          splitLayout(cellWidths = c("30%", "70%"),  cellArgs = list(style='white-space: normal;'),
-                                                     box(title = "Volcano contrasts", id = "volcano_contrasts_box", height = "400px", width = 12, collapsible = T, collapsed = F,
+                                                     box(title = "Volcano contrasts", id = "volcano_contrasts_box", height = "450px", width = 12, collapsible = T, collapsed = F,
                                                          helpText("Select the contrasts to draw the volcano plots and click to 'Plot volcanos'."),
                                                          uiOutput(outputId = "volcano_contrasts"),
                                                          verbatimTextOutput(outputId = "volcano_contrasts_list", placeholder = T),
                                                          actionButton(inputId = "plot_volcano", label = "Plot volcanos")),
-                                                     box(title = "Volcano params", id = "volcano_params_box", height = "400px", width = 12, collapsible = T, collapsed = F,
+                                                     box(title = "Volcano params", id = "volcano_params_box", height = "450px", width = 12, collapsible = T, collapsed = F,
                                                          helpText("Select the extra parameters for the volcano plots."),
                                                          splitLayout(cellWidths = c("33%", "33%", "33%"),  cellArgs = list(style='white-space: normal;'),
                                                           sliderInput(inputId = "rna_mainSize", label = "Plot title size", min = 5, max = 20, value = 10),
@@ -103,37 +84,35 @@ ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPo
                                          HTML('<center><h3>Volcano plots</h3></center>'),
                                          uiOutput("ui_rna_volcanos")),
                                                      
-                                
-                                ### OVERLAP DEGS --------------------------------------------------------------------------------------------------------------
+                                # OVERLAP DEGS
                                 tabPanel(title = "Overlap DEGs", value = "overlap_degs",
                                          br(),
                                          splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
                                           box(title = "Overlap 1", id = "overlap_contrasts", height = "300px", width = 12, collapsible = T, collapsed = F,
-                                              helpText("Select between 2 and 4 contrasts to overlap their DEGs and click to 'Plot overlaps'."), 
+                                              helpText("Select 2 or 3 contrasts to overlap their DEGs and click to 'Plot overlaps'."), 
                                               uiOutput(outputId = "rna_overlap1_contrasts"),
                                               verbatimTextOutput(outputId = "rna_contrast1_list", placeholder = T),
                                               actionButton("submit_rnaOverlaps1", "Plot overlaps")),
                                           
                                           box(title = "Overlap 2", id = "overlap_contrasts", height = "300px", width = 12,
-                                              helpText("Select between 2 and 4 contrasts to overlap their DEGs and click to 'Plot overlaps'."), 
+                                              helpText("Select 2 or 3 contrasts to overlap their DEGs and click to 'Plot overlaps'."), 
                                               uiOutput(outputId = "rna_overlap2_contrasts"),
                                               verbatimTextOutput(outputId = "rna_contrast2_list", placeholder = T),
                                               actionButton("submit_rnaOverlaps2", "Plot overlaps"))),
                                          
                                          HTML('<center><h3>All DEGs</h3></center>'),
                                          splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
-                                                     plotOutput(outputId = "degs_overlaps1", width = 500, height = 500), 
-                                                     plotOutput(outputId = "degs_overlaps2", width = 500, height = 500)),
+                                                     plotOutput(outputId = "degs_overlaps1", width = 600, height = 600), 
+                                                     plotOutput(outputId = "degs_overlaps2", width = 600, height = 600)),
                                          HTML('<center><h3>Upregulated genes</h3></center>'),
                                          splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
-                                                     plotOutput(outputId = "updegs_overlaps1", width = 500, height = 500), 
-                                                     plotOutput(outputId = "updegs_overlaps2", width = 500, height = 500)),
+                                                     plotOutput(outputId = "updegs_overlaps1", width = 600, height = 600), 
+                                                     plotOutput(outputId = "updegs_overlaps2", width = 600, height = 600)),
                                          HTML('<center><h3>Downregulated genes</h3></center>'),
                                          splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
-                                                     plotOutput(outputId = "downdegs_overlaps1", width = 500, height = 500), 
-                                                     plotOutput(outputId = "downdegs_overlaps2", width = 500, height = 500))),
-                                
-                                ### HEATMAPS --------------------------------------------------------------------------------------------------------------
+                                                     plotOutput(outputId = "downdegs_overlaps1", width = 600, height = 600), 
+                                                     plotOutput(outputId = "downdegs_overlaps2", width = 600, height = 600))),
+                                # HEATMAPS
                                 tabPanel(title = "Heatmaps", 
                                     box(title = "Parameters", id = "rna_heatmaps_box", width = 12, collapsible = T, collapsed = F,
                                         helpText("Select the genes to do the log2FC heatmap and click to 'Plot heatmap'."),
@@ -146,17 +125,84 @@ ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPo
                               ) # tabsetPanel rnaseq_tabset end
                             ), # tabItem rnaseq end
                         
+                        # CHIP-SEQ TAB --------------------------------------------------------------------------------------------------------------------
                         tabItem(tabName = "chipseq",
-                           tabsetPanel(id = "chipseq_tabset",
-                               tabPanel(title = "Upload & explore",
+                           h3("ChIP-seq"),
+                           tabsetPanel(id = "chipseq_tabset", type = "pills",
+                               # UPLOAD and EXPLORE
+                               tabPanel(title = "Upload & explore", br(),
                                    splitLayout(cellArgs = list(style='white-space: normal;'),
                                       box(title = "ChIPseq inputs", width = 12, collapsible = T, collapsed = F,
                                           helpText("Select the input file and click to upload."),
                                           fileInput(inputId = "chip_input", label = "Select the input file", buttonLabel = "Browse", placeholder = "Select a file..."),
                                           verbatimTextOutput(outputId = "chipseq_inputFile", placeholder = T),
-                                          actionButton(inputId = "submit_chip", label = "Upload")))       
+                                          actionButton(inputId = "submit_chip", label = "Upload"))),
+                                   
+                                   br(),
+                                   conditionalPanel(condition = "input.submit_chip > 0",
+                                       h3("Explore the data!"),
+                                       helpText("This is a data table with all the peak information. Write a gene inside the search box to see the peaks that are near that gene in each condition."),
+                                       DT::dataTableOutput(outputId = "chip_dataTable"))), # tabPanel chip explore end.
+                               
+                               # PEAKS AND DISTRIBUTION
+                               tabPanel(title = "Peaks",  br(), 
+                                    splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
+                                        box(title = "Number of peaks", width = 12, collapsible = T, collapsed = F,
+                                            helpText("Select the desired parameters and click to 'Plot peaks'."),
+                                            selectInput(inputId = "chip_peaks_legend", label = "Select the legend postion", selected = "No legend", 
+                                                        choices = list("No legend" = "none", "Right" = "right", "Left" = "left", "Bottom" = "bottom", "Top" = "top")),
+                                            checkboxInput(inputId = "chip_peaks_pannel", label = "Separate proteins in pannels?", value = T),
+                                            actionButton(inputId = "generate_chipPeaks", label = "Plot peaks")),
+                                        box(title = "Peak distribution", width = 12, collapsible = T, collapsed = F,
+                                            helpText("Select the desired parameters and click to 'Plot distribution'."),
+                                            radioButtons(inputId = "chip_numRegions", label = "Select the number of regions to annotate", choices = c(2,3), inline = T),
+                                            selectInput(inputId = "chip_anno_type", label = "Select a type of peak distribution", choices = c("Proportion", "Total number"), selected = "Proportion", multiple = F),
+                                            checkboxInput(inputId = "chip_anno_pannel", label = "Separate proteins in pannels?", value = T),
+                                            actionButton("generate_chipAnno", "Plot distribution"))),
+                                    
+                                    splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
+                                        conditionalPanel(condition = "input.generate_chipPeaks > 0", HTML('<center><h3>Total number of peaks</h3></center>')),
+                                        conditionalPanel(condition = "input.generate_chipAnno > 0", HTML('<center><h3>Distribution of peaks in the genome</h3></center>'))),
+                                    
+                                    splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
+                                        conditionalPanel(condition = "input.generate_chipPeaks > 0", plotOutput("chip_peaks", width = 600, height = 500)),
+                                        conditionalPanel(condition = "input.generate_chipAnno > 0", plotOutput("chip_anno", width = 600, height = 500)))),
+                               
+                               # PEAKS INTERSECTION
+                               tabPanel(title = "Intersection", br(),
+                                  splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
+                                        box(title = "Intersection 1", width = 12, collapsible = T, collapsed = F,
+                                            helpText("Select the desired parameteres and click to 'Plot intersection'."),
+                                            uiOutput(outputId = "ui_chip_intersect1"),
+                                            verbatimTextOutput(outputId = "chip_cond_list1", placeholder = T),
+                                            actionButton(inputId = "generate_chip_intersection1", label = "Plot intersection")),
+                                        box(title = "Intersection 1", width = 12, collapsible = T, collapsed = F,
+                                            helpText("Select the desired parameteres and click to 'Plot intersection'."),
+                                            uiOutput(outputId = "ui_chip_intersect2"),
+                                            verbatimTextOutput(outputId = "chip_cond_list2", placeholder = T),
+                                            actionButton("generate_chip_intersection2", "Plot intersection"))),
+                                  
+                                  splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
+                                        conditionalPanel(condition = "input.generate_chip_intersection1 > 0", HTML('<center><h3>Intersection 1</h3></center>')),
+                                        conditionalPanel(condition = "input.generate_chip_intersection2 > 0", HTML('<center><h3>INtersection 2</h3></center>'))),
+                                  
+                                  splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
+                                        conditionalPanel(condition = "input.generate_chip_intersection1 > 0", plotOutput("chip_intersect1", width = 600, height = 500)),
+                                        conditionalPanel(condition = "input.generate_chip_intersection2 > 0", plotOutput("chip_intersect2", width = 600, height = 500)))) 
+                               
+                               
                                 ) # tabsetPanel chipseq_tabset end
-                        ) # tabItem chipseq end
+                        ), # tabItem chipseq end
+                        
+                        # INTEGRATION ---------------------------------------------------------------------------------
+                        # INTEGRATION RNASEQ + CHIPSEQ
+                        tabItem(tabName = "rna_chip",
+                          h3("Integration | RNA-seq + ChIP-seq"),
+                          tabsetPanel(id = "rna_chip_tabset", type = "pills",
+                            tabPanel(title = "Explore DEGs & peaks", br(), 
+                            splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
+                                box(title = "RNA-seq contrast", width = 12, collapsible = T, collapsed = F),
+                                box(title = "ChIP-seq conditions", width = 12, collapsible = T, collapsed = F))))) # tabItem rna_chip integration end
                         )))
 
 
