@@ -42,7 +42,6 @@ Chromosome number (i.e. chr1) | Starting position of the peak | Ending position 
    + `tidyverse`
    + `magrittr` <br><br>
 
-
 * To work with lists and granges
 
    + `plyranges`<br><br>
@@ -59,17 +58,10 @@ Chromosome number (i.e. chr1) | Starting position of the peak | Ending position 
 
 ## To do
 
-* Include download options for lists and plots.
+* Include download options for lists and plots: `write.table()` and `ggsave()`/`png()`?
 * Modify the pipelines to create the desired input (one rule).
-* Modify chipseq input file to include more columns regarding the condition (implies modifying the pipeline):
-
-  + Now includes `condition` which is formatted as `prot1_cond1`, `prot1_cond2`, with `prot` being the chipped protein and `cond` being the condition where the protein was chipped from...
-  
-  + Include, a part of the existing `condition`, a `protein` column with the name of the prot for each observation. This is to stablish a `facet_wrap()` in the ggplots so they will be preetier.
-  
 * Integrate RNAseq and ChIPseq data.
-* Change the theme with `shinyThemes`.
-* Make a Desktop app with `photon`.
+* Make a Desktop app with `electron`/`photon` (2 different apps: 1 for MAC and 1 for Windows).
 
 ## CRAZY ideas
 
