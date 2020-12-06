@@ -3,7 +3,8 @@
 ####################
 
 # ----- shiny ----- #
-library(shiny)
+#library(shiny)
+#library(shinythemes)
 library(DT)
 
 # ----- tidy code ----- #
@@ -20,7 +21,6 @@ library(cowplot)
 library(ComplexHeatmap)
 library(ggpubr)
 library(ChIPpeakAnno)
-
 library(circlize)
 
 # ----- misc ----- #
