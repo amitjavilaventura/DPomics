@@ -6,7 +6,6 @@
 
 # Load Shiny and required packages.
 library(shiny)
-library(shinydashboard)
 source("src/dependencies.R")
 
 # Load custom function

@@ -16,6 +16,7 @@ ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPo
                         hr(),
                         menuItem(text = "Code", href = "https://github.com/amitjavilaventura/DPomics", icon = icon(name = "code", lib = "font-awesome")))),
                     body = dashboardBody(
+                      tags$head(tags$style(HTML(".shiny-split-layout > div {overflow: visible;}"))),
                       tabItems(
                         tabItem(tabName = "home",
                           HTML('<center><p style="font-size:60px;font-family:Helvetica;color:black;"><img src="DPomics_logo.png" width="300px">Welcome to DPomics!</p></center>'),
@@ -184,7 +185,7 @@ ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPo
                                   
                                   splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
                                         conditionalPanel(condition = "input.generate_chip_intersection1 > 0", HTML('<center><h3>Intersection 1</h3></center>')),
-                                        conditionalPanel(condition = "input.generate_chip_intersection2 > 0", HTML('<center><h3>INtersection 2</h3></center>'))),
+                                        conditionalPanel(condition = "input.generate_chip_intersection2 > 0", HTML('<center><h3>Intersection 2</h3></center>'))),
                                   
                                   splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
                                         conditionalPanel(condition = "input.generate_chip_intersection1 > 0", plotOutput("chip_intersect1", width = 600, height = 500)),
@@ -201,8 +202,44 @@ ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPo
                           tabsetPanel(id = "rna_chip_tabset", type = "pills",
                             tabPanel(title = "Explore DEGs & peaks", br(), 
                             splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
-                                box(title = "RNA-seq contrast", width = 12, collapsible = T, collapsed = F),
-                                box(title = "ChIP-seq conditions", width = 12, collapsible = T, collapsed = F))))) # tabItem rna_chip integration end
+                                box(title = "RNA-seq contrast", width = 12, collapsible = T, collapsed = F, height = "300px",
+                                    helpText("Select the contrasts to intersect the DEGs with the ChIP peak-targeted genes, and click to 'Do intersection'"),
+                                    uiOutput(outputId = "ui_int_rna_contrast1")),
+                                box(title = "ChIP-seq conditions", width = 12, collapsible = T, collapsed = F, height = "300px",
+                                 helpText("Conditions 2 will be subtracted from conditions"),
+                                 splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
+                                    verbatimTextOutput(outputId = "int_chip_cont1_cond1", placeholder = T),
+                                    verbatimTextOutput(outputId = "int_chip_cont1_cond2", placeholder = T)),
+                                 helpText("Select the protein(s) to intersect their peaks and click to 'Do intersection'"),
+                                 uiOutput("chip_proteins_select"),
+                                 actionButton(inputId = "intersect_rna_chip", label = "Do intersection"))),
+                            conditionalPanel(condition = "input.intersect_rna_chip > 0",
+                                  HTML('<center><h3>DEGs with ChIP-seq peaks</h3></center>'),
+                                  DT::dataTableOutput(outputId = "degs_with_peaks_dt", width = "100%"),
+                                  HTML('<center><h3>ChIP-seq peaks near DEGs</h3></center>'),
+                                  DT::dataTableOutput(outputId = "peaks_in_degs_dt", width = "100%"))
+                            
+                            ),
+                            tabPanel("Volcano Plots", br(),
+                                     splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
+                                            box(title = "Volcano parameters I", id = "int_volcano_params_box", width = 12, collapsible = T, collapsed = F,
+                                                helpText("Select the parameters for the volcano plot and click to 'Plot volcano'"),
+                                                sliderInput(inputId = "int_rna_mainSize", label = "Plot title size", min = 5, max = 20, value = 10),
+                                                sliderInput(inputId = "int_rna_subSize", label = "Plot subtitle size", min = 5, max = 20, value = 10),
+                                                sliderInput(inputId = "int_rna_axisText", label = "Axis text size", min = 5, max = 20, value = 9),
+                                                sliderInput(inputId = "int_rna_sizeDEGs", label = "DEG number size", min = 5, max = 20, value = 7),
+                                                actionButton(inputId = "int_rnachip_volcano", label = "Plot volcano")),
+                                            box(title = "Volcano parameters II", id = "int_volcano_params_box2", width = 12, collapsible = T, collapsed = F,
+                                                sliderInput(inputId = "int_volcanosHeight", label = "Plot height", min = 500, max = 1500, value = 1000),
+                                                checkboxInput("int_rna_checkLabels", label = "Show DEGs names?", value = TRUE),
+                                                conditionalPanel(condition = "input.int_rna_checkLabels==true",
+                                                  splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
+                                                        sliderInput("int_rna_numLabels", label = "Number of DEG names to show", min = 0, max = 10, step = 1, value = 3),
+                                                        sliderInput("int_rna_sizeLabels", label = "Size of the DEG names", min = 3, max = 9, value = 4))))),
+                                
+                                HTML('<center><h3>Nearest DEGs to a ChIP-peak</h3></center>'),
+                                plotOutput("int_rna_chip_volcanos", width = "100%")
+                                     ))) # tabItem rna_chip integration end
                         )))
 
 

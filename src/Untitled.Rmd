@@ -1,0 +1,32 @@
+---
+title: "Untitled"
+author: "Adrià Mitjavila Ventura"
+date: "12/6/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r pressure, echo=FALSE}
+degs <- read.delim("data/degs_rnaseq.tsv")
+
+
+data <- degs %>% 
+  mutate(celltype = if_else(str_detect(string = degs$Contrast, pattern = "Lgr5"), "Lgr5", "Organoids")) %>%
+  mutate(cond1    = if_else(str_detect(string = degs$Contrast, pattern = "- APC "), "APC", 
+                            if_else(str_detect(string = degs$Contrast, pattern = "- bCAT "), "bCAT", 
+                                    if_else(str_detect(string = degs$Contrast, pattern = "- WTp "), "WTp", 
+                                            if_else(str_detect(string = degs$Contrast, pattern = "- WTn "), "WTn", 
+                                                    if_else(str_detect(string = degs$Contrast, pattern = "- WT "), "WT", "NA")))))) %>%
+  mutate(cond2    = if_else(str_detect(string = degs$Contrast, pattern = "vs APC"), "APC", 
+                            if_else(str_detect(string = degs$Contrast, pattern = "vs bCAT"), "bCAT", 
+                                    if_else(str_detect(string = degs$Contrast, pattern = "vs WTp"), "WTp", 
+                                            if_else(str_detect(string = degs$Contrast, pattern = "vs WTn"), "WTn", 
+                                                    if_else(str_detect(string = degs$Contrast, pattern = "vs WT"), "WT", "NA")))))) 
+         
+write.table(x = data, file = "../data/degs_rnaseq_new.tsv", quote = F, sep = "\t", row.names = F, col.names = T)
+```
+

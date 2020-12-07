@@ -9,10 +9,11 @@ server <- function(input, output) {
   # text with the name of the file
   output$rnaseq_inputFile <- renderPrint({ input$rnaseq_input$name })
   
+  # INPUTS ----------------------------------------------------------------------------------------------------------------------
+  # reactive input
+  rna_data <- eventReactive(eventExpr = input$submit_rna, { read.delim(input$rnaseq_input$datapath) })
+  
   observeEvent(eventExpr = input$submit_rna, {
-    # INPUTS ----------------------------------------------------------------------------------------------------------------------
-    # reactive input
-    rna_data <- reactive({ read.delim(input$rnaseq_input$datapath) })
 
     # EXPLORATION TAB ------------------------------------------------------------------------------------------------------------ 
     # table with the data of the table
@@ -30,7 +31,8 @@ server <- function(input, output) {
                      choices = contrasts, selected = NULL, multiple = T, 
                      options = list(placeholder = "Select the contrasts..."))
     })
-    #output$volcano_contrasts_list <- renderText({ paste(input$rna_contrasts, sep = ";") })
+    
+    output$volcano_contrasts_list <- renderPrint({ input$rna_contrasts })
     
     # plot volcaons
     observeEvent(eventExpr = input$plot_volcano, {
@@ -55,11 +57,11 @@ server <- function(input, output) {
     # OVERLAP DEGS TAB -----------------------------------------------------------------------------------------------------------
     # renuder UIs to select contrasts
     output$rna_overlap1_contrasts <- renderUI({
-    data <- rna_data()
-    contrasts <- data$Contrast %>% unique
-    selectizeInput(inputId = "contrastDegs1", choices = contrasts, multiple = T, label = paste("Select the contrasts to overlap", sep = " "), 
-                   options = list(maxItems = 3, placeholder = "Select 2 or 3 contrasts..."))
-                   })
+      data <- rna_data()
+      contrasts <- data$Contrast %>% unique
+      selectizeInput(inputId = "contrastDegs1", choices = contrasts, multiple = T, label = paste("Select the contrasts to overlap", sep = " "), 
+                    options = list(maxItems = 3, placeholder = "Select 1 contrasts..."))
+    })
     output$rna_overlap2_contrasts <- renderUI({
       data <- rna_data()
       contrasts <- data$Contrast %>% unique
@@ -68,8 +70,8 @@ server <- function(input, output) {
     })
     
     # render verbatimTextOutputs rna_contrast1_list rna_contrast2_list
-    output$rna_contrast1_list <- renderPrint({ print(input$rna_overlap1_contrasts) })
-    output$rna_contrast2_list <- renderPrint({ print(input$rna_overlap2_contrasts) })
+    output$rna_contrast1_list <- renderPrint({ print(input$contrastDegs1) })
+    output$rna_contrast2_list <- renderPrint({ print(input$contrastDegs2) })
     
     # plot venn diagrams 1
     observeEvent(input$submit_rnaOverlaps1, {
@@ -198,11 +200,11 @@ server <- function(input, output) {
   
   ### ----- CHIP-SEQ STUFF ----- ###  
   output$chipseq_inputFile <- renderPrint({ input$chip_input$name })
+  
+  # read peaks file
+  chip_data <- eventReactive(eventExpr = input$submit_chip, { read.delim(input$chip_input$datapath) })
 
   observeEvent(eventExpr = input$submit_chip, {
-    
-    # read peaks file
-    chip_data <- reactive({ read.delim(input$chip_input$datapath) })
     
     ### EXPLORATION TAB ----------------------------------------------------------------------------------------------------
     # dataTable for exploration
@@ -225,7 +227,7 @@ server <- function(input, output) {
       # plot distribution of peaks
       output$chip_anno <- renderPlot({
         peaks <- chip_data()
-        barAnno(data = peaks, names = peaks$samples %>% unique(), pannel = input$chip_anno_pannel,
+        barAnno(data = peaks, names = peaks$sample %>% unique(), pannel = input$chip_anno_pannel,
                 anno_num = input$chip_numRegions, peak_type = input$chip_anno_type, palette = "Set2", ylab = paste(input$chip_anno_type, "of peaks"))
       })
     }) # ovserveEvent end (actionButton generate_barAnno)
@@ -234,19 +236,19 @@ server <- function(input, output) {
     # get selectInputs for conditions to intersect
     output$ui_chip_intersect1 <- renderUI({
       peaks <- chip_data()
-      samples <- peaks$samples %>% unique
+      samples <- peaks$sample %>% unique
       selectizeInput(inputId = "chip_conditions1", label = "Select the conditions to overlap the peaks",
                      choices = samples, selected = NULL, multiple = T, 
-                     options = list(maxItems = 4, placeholder = "Select between 2 and 3 conditions"))
+                     options = list(maxItems = 3, placeholder = "Select between 2 and 3 conditions"))
     })
     output$chip_cond_list1 <- renderPrint({ paste(input$chip_conditions1, sep = "; ") })
     
     output$ui_chip_intersect2 <- renderUI({
       peaks <- chip_data()
-      samples <- peaks$samples %>% unique
+      samples <- peaks$sample %>% unique
       selectizeInput(inputId = "chip_conditions2", label = "Select the conditions to overlap the peaks",
                      choices = samples, selected = NULL, multiple = T, 
-                     options = list(maxItems = 4, placeholder = "Select between 2 and 3 conditions"))
+                     options = list(maxItems = 3, placeholder = "Select between 2 and 3 conditions"))
     })
     
     output$chip_cond_list2 <- renderPrint({ paste(input$chip_conditions2, sep = "; ") })
@@ -267,4 +269,94 @@ server <- function(input, output) {
     })
   }) #observeEvent submit chip end
   
+  ###############################
+  ### ----- INTEGRATION ----- ###  
+  ### ===== CHIP + RNA ===== ###
+  # EXPLORE TAB ----------------
+  # get ui to select contrasts etc
+  output$ui_int_rna_contrast1 <- renderUI({
+    data <- rna_data()
+    contrasts <- data$Contrast %>% unique
+    selectizeInput(inputId = "int_rna_contrast1", choices = contrasts, multiple = T,
+                   options = list(placeholder = "Select a contrast..."), label = "Contrast")
+  })
+  output$chip_proteins_select <- renderUI({
+    data <- chip_data()
+    protein <- data$protein %>% unique
+    selectizeInput(inputId = "chip_proteins_select", choices = protein, multiple = F,
+                   options = list(placeholder = "Select a protein..."), label = "Chipped protein")
+  })
+  
+  observeEvent(eventExpr = input$intersect_rna_chip, {
+    
+    output$int_chip_cont1_cond1 <- renderPrint({
+      data <- rna_data()
+      cond1 <- (data %>% filter(Contrast %in% input$int_rna_contrast1) %>% select(Contrast, cond1) %>% unique() %>% select(cond1))$cond1 %>% as.character()
+      print(cond1)
+    })  
+    output$int_chip_cont1_cond2 <- renderPrint({
+      data <- rna_data()
+      cond2 <- (data %>% filter(Contrast %in% input$int_rna_contrast1) %>% select(Contrast, cond2) %>% unique() %>% select(cond2))$cond2 %>% as.character()
+      print(cond2)
+    })
+    
+    # peak subtraction
+    peak_subtraction <- reactive({
+      rna_data <- rna_data()
+      chip_data <- chip_data()
+      peak_subtracted_list <- list
+      for(i in 1:length(input$int_rna_contrast1)){
+      cond1 <- (rna_data %>% filter(Contrast == input$int_rna_contrast1[i]) %>% select(Contrast, cond1) %>% unique() %>% select(cond1))$cond1 %>% as.character()
+      cond2 <- (rna_data %>% filter(Contrast == input$int_rna_contrast1[i]) %>% select(Contrast, cond2) %>% unique() %>% select(cond2))$cond2 %>% as.character()
+      chip1 <- chip_data %>% filter(condition == cond1, protein == input$chip_proteins_select) %>% as_granges()
+      chip2 <- chip_data %>% filter(condition == cond2, protein == input$chip_proteins_select) %>% as_granges()
+      peak_subtraction <- plyranges::filter_by_overlaps(chip1, chip2)
+      peak_subtracted_list[[i]] <- peak_subtraction %>% as_data_frame()
+      }
+      
+      peak_subtracted_list
+    })
+    
+    # do interesections
+    degs_with_peaks <- reactive({
+      rna_data <- rna_data()
+      chip_peaks <- peak_subtraction()
+      degs_with_peaks <- list()
+      for(i in 1:length(input$int_rna_contrast1)){
+        degs_with_peaks[[i]] <- rna_data %>% filter(Contrast == input$int_rna_contrast1[i], Geneid %in% chip_peaks[[i]]$SYMBOL)
+      }
+      degs_with_peaks
+    })
+    
+    peaks_in_degs <- reactive({
+      rna_data <- rna_data() 
+      chip_peaks <- peak_subtraction()
+      peaks_in_degs <- list()
+      for(i in 1:length(input$int_rna_contrast1)){
+        peaks_in_degs[[i]] <- chip_peaks[[i]] %>% filter(SYMBOL %in% (rna_data %>% filter(Contrast == input$int_rna_contrast1[i]))$Geneid)
+      }
+      peaks_in_degs
+    })
+    
+    # do data tables
+    output$degs_with_peaks_dt <- DT::renderDT({ DT::datatable(data = degs_with_peaks() %>% bind_rows(), options = list(lengthMenu = c(5, 10, 20), pageLength = 10)) })
+    output$peaks_in_degs_dt   <- DT::renderDT({ DT::datatable(data = peaks_in_degs() %>% bind_rows(), options = list(lengthMenu = c(5, 10, 20), pageLength = 10)) })
+    
+    # plot volcano plot 
+    observeEvent(eventExpr = input$int_rnachip_volcano, {
+      output$int_rna_chip_volcanos <- renderPlot(height = input$int_volcanosHeight, {
+        degs_with_peaks <- degs_with_peaks()
+        volcanoList <- list()
+        for(i in 1:length(input$int_rna_contrast1)){
+          p <- volcanoPlot2(df = degs_with_peaks[[i]], log2FC = input$rna_log2fc, pval = input$rna_padj,  main = input$int_rna_contrast1[i], 
+                            sub = input$input$chip_proteins_select, mainSize = input$int_rna_mainSize, subSize = input$int_rna_subSize, 
+                            labelSize = input$int_rna_sizeDEGs, legendPos = "bottom", degsLabel = input$int_rna_checkLabels, 
+                            degsLabelNum = input$int_rna_numLabels, degsLabelSize = input$int_rna_sizeLabels,
+                            axisTextSize = input$int_rna_axisText, axisLabelSize = input$int_rna_axisText)
+          volcanoList[[i]] <- p
+        }
+        ggarrange(plotlist = volcanoList, ncol = 2, nrow = ceiling(length(volcanoList)/2), common.legend = T, legend = "bottom")
+      })
+    }) # observeEvent end actionButton make volcano rna_chip intersection 
+  }) # observeEvent intersect_rna_chip end
 } ## SERVER FUNCTION END

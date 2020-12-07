@@ -101,7 +101,7 @@ intersectPeaks <- function(peaks, conditions){
   
   list <- list()
   for(i in 1:length(conditions)){
-    cond <- peaks %>% dplyr::filter(samples == conditions[i]) %>% plyranges::as_granges()
+    cond <- peaks %>% dplyr::filter(sample == conditions[i]) %>% plyranges::as_granges()
     list[[i]] <- cond
   }
   
