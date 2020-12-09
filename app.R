@@ -19,8 +19,10 @@ source("src/functions_ui.R")
 source("src/app_ui.R")
 
 # Load SERVER FUNCTION
-
 source("src/app_server.R")
+
+# increasing capacity of file uploading to 30kb
+options(shiny.maxRequestSize = 70*1024^2)
 
 
 # RUN APP

@@ -58,9 +58,10 @@ Chromosome number (i.e. chr1) | Starting position of the peak | Ending position 
 
 ## To do
 
-* Include download options for lists and plots: `write.table()` and `ggsave()`/`png()` + `actionButton()`?
 * Modify the pipelines to create the desired input (one rule).
-* Integrate RNAseq and ChIPseq data.
+* Include download options for lists and plots: `write.table()` and `ggsave()`/`png()` + `actionButton()`?
+* Put gene ontology in DEGs
+* Integrate RNAseq and ChIPseq data. --> at the moment,  the integration does not work
 * Make a Desktop app with `electron`/`photon` (2 different apps: 1 for MAC and 1 for Windows).
 
 ## CRAZY ideas
