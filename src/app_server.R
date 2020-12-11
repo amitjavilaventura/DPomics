@@ -13,7 +13,7 @@ server <- function(input, output) {
   # reactive input
   rna_data <- eventReactive(eventExpr = input$submit_rna, { read.delim(input$rnaseq_input$datapath) })
   
-  observeEvent(eventExpr = input$submit_rna, {
+  #observeEvent(eventExpr = input$submit_rna, {
 
     # EXPLORATION TAB ------------------------------------------------------------------------------------------------------------ 
     # table with the data of the table
@@ -35,21 +35,22 @@ server <- function(input, output) {
     output$volcano_contrasts_list <- renderPrint({ input$rna_contrasts })
     
     # plot volcaons
-    observeEvent(eventExpr = input$plot_volcano, {
-      output$ui_rna_volcanos <- renderUI({ plotOutput(outputId = "rna_volcanos", width = 1200, height = input$volcanosHeight) })
+   observeEvent(eventExpr = input$plot_volcano, {
+      output$ui_rna_volcanos <- renderUI({ plotOutput(outputId = "rna_volcanos", width = 1200, height = isolate(input$volcanosHeight)) })
       output$rna_volcanos <- renderPlot({
+        input$plot_volcano
         data <- rna_data()
-        degs <- annotate_de(degs = data, log2FC = input$rna_log2fc, padj = input$rna_padj)
+        degs <- annotate_de(degs = data, log2FC = isolate(input$rna_log2fc), padj = isolate(input$rna_padj))
         plotlist <- list()
-        for(i in 1:length(input$rna_contrasts)){
-          p <- volcanoPlot2(df = degs[which(degs$Contrast == input$rna_contrasts[i]),], 
-                            log2FC = input$rna_log2fc, pval = input$rna_padj, 
-                            main = input$rna_contrasts[i], mainSize = input$rna_mainSize, labelSize = input$rna_sizeDEGs, 
-                            axisLabelSize = input$rna_axisText, axisTextSize = input$rna_axisText,
-                            degsLabel = input$rna_checkLabels, degsLabelNum = input$rna_numLabels, degsLabelSize = input$rna_sizeLabels)
+        for(i in 1:length(isolate(input$rna_contrasts))){
+          p <- volcanoPlot2(df = degs[which(degs$Contrast == isolate(input$rna_contrasts[i])),], 
+                            log2FC = isolate(input$rna_log2fc), pval = isolate(input$rna_padj), 
+                            main = isolate(input$rna_contrasts[i]), mainSize = isolate(input$rna_mainSize), labelSize = isolate(input$rna_sizeDEGs), 
+                            axisLabelSize = isolate(input$rna_axisText), axisTextSize = isolate(input$rna_axisText),
+                            degsLabel = isolate(input$rna_checkLabels), degsLabelNum = isolate(input$rna_numLabels), degsLabelSize = isolate(input$rna_sizeLabels))
           plotlist[[i]] <- p
         }
-        ggarrange(plotlist = plotlist, ncol = 2, nrow = ceiling(length(input$rna_contrasts)/2),legend = "bottom", common.legend = T)
+        ggarrange(plotlist = plotlist, ncol = 2, nrow = ceiling(length(isolate(input$rna_contrasts))/2), legend = "bottom", common.legend = T)
       })
       
     }) # observeEvent submit_rnaVolcano end
@@ -78,28 +79,30 @@ server <- function(input, output) {
 
       ## upregulated genes
       output$updegs_overlaps1 <- renderPlot({
+        input$submit_rnaOverlaps1
         data <- rna_data()
         data <- data %>% dplyr::filter(DEG == "Upregulated")
         list <- list()
-        for (i in 1:length(input$contrastDegs1)){
-          x <- data %>% dplyr::filter(Contrast == input$contrastDegs1[i]) %>% dplyr::select(Geneid)
+        for (i in 1:length(isolate(input$contrastDegs1))){
+          x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs1[i])) %>% dplyr::select(Geneid)
           list[[i]] <- x$Geneid
         }
-        colors <- rainbow(n = length(input$contrastDegs1), alpha = 0.6)
+        colors <- rainbow(n = length(isolate(input$contrastDegs1)), alpha = 0.6)
         cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs1), fill = colors))
       })
       
       ## downregulated genes
       output$downdegs_overlaps1 <- renderPlot({
+        input$submit_rnaOverlaps1
         data <- rna_data()
         data <- data %>% dplyr::filter(DEG == "Downregulated")
         list <- list()
-        for (i in 1:length(input$contrastDegs1)){
-          x <- data %>% dplyr::filter(Contrast == input$contrastDegs1[i]) %>% dplyr::select(Geneid)
+        for (i in 1:length(isolate(input$contrastDegs2))){
+          x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs2[i])) %>% dplyr::select(Geneid)
           list[[i]] <- x$Geneid
         }
-        colors <- rainbow(n = length(input$contrastDegs1), alpha = 0.6)
-        cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = input$contrastDegs1, fill = colors))
+        colors <- rainbow(n = length(isolate(input$contrastDegs2)), alpha = 0.6)
+        cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs2), fill = colors))
       })
       
     }) # observeEvent end (actionButton generate overlaps1)
@@ -109,28 +112,30 @@ server <- function(input, output) {
       
       ## upregulated genes
       output$updegs_overlaps2 <- renderPlot({
+        input$submit_rnaOverlaps2
         data <- rna_data()
         data <- data %>% dplyr::filter(DEG == "Upregulated")
         list <- list()
-        for (i in 1:length(input$contrastDegs2)){
-          x <- data %>% dplyr::filter(Contrast == input$contrastDegs2[i]) %>% dplyr::select(Geneid)
+        for (i in 1:length(isolate(input$contrastDegs2))){
+          x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs2[i])) %>% dplyr::select(Geneid)
           list[[i]] <- x$Geneid
         }
-        colors <- rainbow(n = length(input$contrastDegs2), alpha = 0.6)
-        cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = input$contrastDegs2, fill = colors))
+        colors <- rainbow(n = length(isolate(input$contrastDegs2), alpha = 0.6))
+        cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs2), fill = colors))
       })
       
       ## downregulated genes
       output$downdegs_overlaps2 <- renderPlot({
+        input$submit_rnaOverlaps2
         data <- rna_data()
         data <- data %>% dplyr::filter(DEG == "Downregulated")
         list <- list()
-        for (i in 1:length(input$contrastDegs2)){
-          x <- data %>% dplyr::filter(Contrast == input$contrastDegs2[i]) %>% dplyr::select(Geneid)
+        for (i in 1:length(isolate(input$contrastDegs2))){
+          x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs2)[i]) %>% dplyr::select(Geneid)
           list[[i]] <- x$Geneid
         }
-        colors <- rainbow(n = length(input$contrastDegs2), alpha = 0.6)
-        cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = input$contrastDegs2, fill = colors))
+        colors <- rainbow(n = length(isolate(input$contrastDegs2)), alpha = 0.6)
+        cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs2), fill = colors))
       })
     }) # observeEvent end (actionButton generate overlaps2)
     
@@ -145,10 +150,10 @@ server <- function(input, output) {
     # format matrix of data
     log2fc <- reactive({
       data  <- rna_data()
-      x <- data %>% select(Contrast, Geneid, log2FoldChange, DEG)
+      x <- data %>% select(Contrast, Geneid, log2FoldChange, padj, DEG)
       l <- list()
       for(i in x$Contrast %>% unique){
-        z <- x %>% dplyr::filter(Contrast == i)  %>% set_colnames(c("Contrast", "Geneid", i, paste(i,"DEG", sep = "_"))) %>% 
+        z <- x %>% dplyr::filter(Contrast == i)  %>% set_colnames(c("Contrast", "Geneid", i, paste(i,"DEG", sep = "_"), paste(i,"padj", sep = "_"))) %>% 
           dplyr::select(everything(), -Contrast)
         l[[i]] <- z
       }
@@ -158,10 +163,11 @@ server <- function(input, output) {
     # plot heatmap
     observeEvent(eventExpr = input$heatmap_button, {
       output$rna_heatmap <- renderPlot({
-        genes <- input$select_genes_heatmap
+        input$heatmap_button
+        genes <- isolate(input$select_genes_heatmap)
         genes <- genes %>% stringr::str_split(pattern = " ") %>% unlist()
         l <- log2fc() %>% dplyr::filter(Geneid %in% genes)
-        log2FC <- l %>% dplyr::select(-matches("_DEG")) %>% column_to_rownames("Geneid") 
+        log2FC <- l %>% dplyr::select(-matches("_DEG"), -matches("_padj")) %>% column_to_rownames("Geneid")
         ComplexHeatmap::Heatmap(matrix = as.matrix(log2FC), name = "Log2FC", show_row_names = T,
                                 column_title = "Log2FC of selected genes", column_title_side = "top",
                                 col = colorRamp2(c(-3, 0, 3), c("blue", "white", "red")),
@@ -171,7 +177,7 @@ server <- function(input, output) {
       })
     }) # observe event actionButton heatmap
         
-  }) # observeEvent end (submit_rna file)
+  #}) # observeEvent end (submit_rna file)
   
   
   ### ----- CHIP-SEQ STUFF ----- ###  
