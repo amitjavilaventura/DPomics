@@ -267,5 +267,102 @@ server <- function(input, output) {
   ###############################
   ### ----- INTEGRATION ----- ###  
   ### ===== CHIP + RNA ===== ###
+  # peak subtraction
+  peak_subtract <- eventReactive(eventExpr = input$peak_subtraction_button, {
+    rna_data <- rna_data()
+    chip_data <- chip_data()
+    
+    contrasts <- rna_data$Contrast %>% unique %>% as.character()
+    
+    peak_contrast_list <- list()
+    for(i in 1:length(contrasts)){
+      
+      rna <- rna_data %>% filter(Contrast == contrasts[i])
+      rna <- rna %>% mutate(contrast2 = paste(cond1, "_", cond2, sep = ""))
+      contrast <- rna$contrast2 %>% unique()
+      
+      if( rna$celltype %>% unique() %in% chip_data$celltype %>% unique()) {
+        
+        # take chip peaks
+        chip <- chip_data %>% filter(celltype %in% rna$celltype, protein == input$int_chip_rna_protein)
+        chip1 <- chip %>% filter(condition %in% rna$cond1) %>% as_granges()
+        chip2 <- chip %>% filter(condition %in% rna$cond2) %>% as_granges()
+        
+        # conditions names
+        cond1 <- chip1$condition %>% unique() %>% as.character()
+        cond2 <- chip2$condition %>% unique() %>% as.character()
+        
+        # peak subtraction
+        chip1_chip2 <- filter_by_non_overlaps(chip1, chip2) %>% as_tibble() %>% 
+          select(everything(), -condition, -sample) %>% 
+          mutate(contrast = contrast) %>% mutate(cond1 = cond1) %>% mutate(cond2 = cond2)
+        
+        peak_contrast_list[[contrast]] <- chip1_chip2
+       
+      }
+      else{ paste("Celltype", rna$celltype %>% unique(), "in RNAseq is not in ChIPseq.") }
+    }
+    
+    peak_contrast_list
+    
+  })
+  
+  observeEvent(eventExpr = input$peak_subtraction_button, {
+  # data tables
+  output$degs_near_peaks <- DT::renderDataTable({
+    d <- list()
+    peak_contrast_list <- peak_subtract()
+    rna_data <- rna_data()
+    for(i in 1:length(peak_contrast_list)){
+      
+      rna <- rna_data %>% 
+        filter(celltype == peak_contrast_list[[i]]$celltype %>% as.character %>% unique) %>% 
+        filter(cond1 == peak_contrast_list[[i]]$cond1 %>% as.character %>% unique) %>% 
+        filter(cond2 == peak_contrast_list[[i]]$cond2 %>% as.character %>% unique) %>% 
+        filter(DEG != "NS")
+      
+      
+      degs_with_peaks <- rna %>% filter(Geneid  %in% peak_contrast_list[[i]]$SYMBOL)
+      
+      d[[i]] <- degs_with_peaks
+    }
+    
+    d %>% bind_rows
+  })
+  
+  
+  # VOLCANO PLOTS
+  observeEvent(input$plot_int_volcanos, {
+  output$ui_int_volcanos <- renderUI({ plotOutput(outputId = "int_chiprna_volcano", width = 1200, height = input$int_volcanosHeight) })
+  output$int_chiprna_volcano <- renderPlot({
+    d <- list()
+    peak_contrast_list <- peak_subtract()
+    rna_data <- rna_data()
+    for(i in 1:length(peak_contrast_list)){
+      
+      rna <- rna_data %>% 
+        filter(celltype == peak_contrast_list[[i]]$celltype %>% as.character %>% unique) %>% 
+        filter(cond1 == peak_contrast_list[[i]]$cond1 %>% as.character %>% unique) %>% 
+        filter(cond2 == peak_contrast_list[[i]]$cond2 %>% as.character %>% unique) %>% 
+        filter(DEG != "NS")
+      
+      
+      degs_with_peaks <- rna %>% filter(Geneid  %in% peak_contrast_list[[i]]$SYMBOL)
+      
+      d[[i]] <- degs_with_peaks
+    }
+    
+    volcanos <- list()
+    for(i in 1:length(d)){
+      v <- volcanoPlot2(df = d[[i]], main = "DEGs targeted by/close to peaks", sub = d[[i]]$Contrast %>% unique())
+      volcanos[[i]] <- v
+    }
+    ggarrange(plotlist = volcanos, ncol = 2, nrow = ceiling(length(volcanos)/2), common.legend = T)
+    
+  })
+     
+  })
+  
+  })
   
 } ## SERVER FUNCTION END
