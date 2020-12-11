@@ -98,7 +98,7 @@ server <- function(input, output) {
         data <- data %>% dplyr::filter(DEG == "Downregulated")
         list <- list()
         for (i in 1:length(isolate(input$contrastDegs2))){
-          x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs2[i])) %>% dplyr::select(Geneid)
+          x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs1[i])) %>% dplyr::select(Geneid)
           list[[i]] <- x$Geneid
         }
         colors <- rainbow(n = length(isolate(input$contrastDegs2)), alpha = 0.6)
@@ -131,7 +131,7 @@ server <- function(input, output) {
         data <- data %>% dplyr::filter(DEG == "Downregulated")
         list <- list()
         for (i in 1:length(isolate(input$contrastDegs2))){
-          x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs2)[i]) %>% dplyr::select(Geneid)
+          x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs2[i])) %>% dplyr::select(Geneid)
           list[[i]] <- x$Geneid
         }
         colors <- rainbow(n = length(isolate(input$contrastDegs2)), alpha = 0.6)
