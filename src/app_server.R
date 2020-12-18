@@ -200,7 +200,7 @@ server <- function(input, output) {
       # plot number of peaks
       output$chip_peaks <- renderPlot({
         peaks <- chip_data()
-        peakNum(data = peaks, legend_position = input$chip_peaks_legend, pannel = input$chip_peaks_pannel)
+        peakNum(data = peaks, legend_position = isolate(input$chip_peaks_legend), pannel = isolate(input$chip_peaks_pannel))
       })
     }) # ovserveEvent end (actionButton generate_peaks)
     
@@ -209,8 +209,8 @@ server <- function(input, output) {
       # plot distribution of peaks
       output$chip_anno <- renderPlot({
         peaks <- chip_data()
-        barAnno(data = peaks, names = peaks$sample %>% unique(), pannel = input$chip_anno_pannel,
-                anno_num = input$chip_numRegions, peak_type = input$chip_anno_type, palette = "Set2", ylab = paste(input$chip_anno_type, "of peaks"))
+        barAnno(data = peaks, names = peaks$sample %>% unique(), pannel = isolate(input$chip_anno_pannel),
+                anno_num = isolate(input$chip_numRegions), peak_type = isolate(input$chip_anno_type), palette = "Set2", ylab = paste(isolate(input$chip_anno_type), "of peaks"))
       })
     }) # ovserveEvent end (actionButton generate_barAnno)
     
@@ -239,23 +239,26 @@ server <- function(input, output) {
     observeEvent(eventExpr = input$generate_chip_intersection1, {
       output$chip_intersect1 <- renderPlot({
         peaks <- chip_data()
-        intersectPeaks(peaks = peaks, conditions = input$chip_conditions1)
+        intersectPeaks(peaks = peaks, conditions = isolate(input$chip_conditions1))
       })
     })
     
     observeEvent(eventExpr = input$generate_chip_intersection2, {
       output$chip_intersect2 <- renderPlot({
         peaks <- chip_data()
-        intersectPeaks(peaks = peaks, conditions = input$chip_conditions2)
+        intersectPeaks(peaks = peaks, conditions = isolate(input$chip_conditions2))
       })
     })
     
     ### CUSTOM COORDINATES TAB ---------------------------------------------------------------------------------------------------
     output$uploaded_coords_name <- renderPrint({ input$upload_coords$name })
     
-    custom_coords <- eventReactive(eventExpr = input$upload_coords_button, { 
-      read.delim(file = input$upload_coords$datapath, header = input$upload_coords_header, sep = input$upload_coords_sep)
-        })
+    custom_coords <- eventReactive(eventExpr = input$upload_coords_button, {
+      if(input$upload_coords_header == T){read.delim(file = input$upload_coords$datapath, header = input$upload_coords_header, sep = input$upload_coords_sep)}
+      else{read.delim(file = input$upload_coords$datapath, header = input$upload_coords_header, sep = input$upload_coords_sep) %>%
+          set_colnames(input$custom_header %>% stringr::str_split(pattern = " ") %>% unlist())}
+      
+    })
     
     observeEvent(eventExpr = input$upload_coords_button, {
       output$coords_chip <- DT::renderDataTable({
@@ -339,7 +342,7 @@ server <- function(input, output) {
   
   # VOLCANO PLOTS
   observeEvent(input$plot_int_volcanos, {
-  output$ui_int_volcanos <- renderUI({ plotOutput(outputId = "int_chiprna_volcano", width = 1200, height = input$int_volcanosHeight) })
+  output$ui_int_volcanos <- renderUI({ plotOutput(outputId = "int_chiprna_volcano", width = 1200, height = isolate(input$int_volcanosHeight)) })
   output$int_chiprna_volcano <- renderPlot({
     d <- list()
     peak_contrast_list <- peak_subtract()

@@ -200,9 +200,15 @@ ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPo
                                           fileInput(inputId = "upload_coords", label = "Browse", multiple = F, buttonLabel = "Browse", placeholder = "Select a file..."),
                                           verbatimTextOutput("uploaded_coords_name", placeholder = T),
                                           checkboxInput("upload_coords_header", label = "Field names or header?", value = F),
-                                          selectInput("upload_coords_sep", label = "Field separator", selected = "Tabulation", multiple = F,
-                                                      choices = list("Tabulation" = "\t", "Space" = " ", "Comma" = ",", "Semicolon" = ";", "Colon" = ":")),
-                                          actionButton(inputId = "upload_coords_button", label = "Upload")),
+                                          conditionalPanel(condition = "input.upload_coords_header==true",
+                                            selectInput("upload_coords_sep", label = "Field separator", selected = "Tabulation", multiple = F,
+                                                        choices = list("Tabulation" = "\t", "Space" = " ", "Comma" = ",", "Semicolon" = ";", "Colon" = ":"))),
+                                          conditionalPanel(condition = "input.upload_coords_header==false",
+                                            helpText("Write the field/column names for the uploaded list of custom coordinates."),
+                                            helpText("The fields corresponding to chromosome, start and end must be 'seqnames', 'start' and 'end'."),
+                                            helpText("Use blank spaces to separate each written field name."),
+                                            textInput(inputId = "custom_header", label = "Write the field names:", placeholder = "seqnames start end ..."))),
+                                          actionButton(inputId = "upload_coords_button", label = "Upload"),
                                       
                                       DT::dataTableOutput(outputId = "coords_chip"))
                                
