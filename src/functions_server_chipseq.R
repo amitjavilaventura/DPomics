@@ -3,7 +3,7 @@
 ### ==============================================================================================================================
 
 # ----- PEAK NUM ----- #
-peakNum <- function(data, legend_position = "right", pannels = T){
+peakNum <- function(data, legend_position = "right", pannels = T, plotly = F){
   
   library(ggplot2)
   library(ggpubr)
@@ -20,6 +20,11 @@ peakNum <- function(data, legend_position = "right", pannels = T){
           legend.title = element_blank(),
           legend.position = legend_position)
   
+  if(plotly){
+    require(plotly)
+    g <- ggplotly(g)
+  }
+  
   return(g)
 }
 
@@ -27,7 +32,8 @@ peakNum <- function(data, legend_position = "right", pannels = T){
 barAnno  <- function(data, names,
                      main = "Distribution of peaks in the genome",
                      ylab = "Proportion", xlab = "Condition", pannels = T,
-                     palette = "Set1", anno_num = 3, peak_type = "Proportion"){
+                     palette = "Set1", anno_num = 3, peak_type = "Proportion",
+                     plotly = F){
   
   # Load packages
   library(dplyr)
@@ -90,6 +96,11 @@ barAnno  <- function(data, names,
     theme(axis.text.x = element_text(angle = 20, hjust = 1, vjust = 1),
           legend.title = element_blank(),
           legend.position = "right")
+  
+  if(plotly){
+    require(plotly)
+    g <- ggplotly(g)
+  }
   
   # Draw plot
   return(g)

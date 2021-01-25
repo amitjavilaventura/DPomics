@@ -2,7 +2,10 @@
 ### DPomics SERVER FUNCTION
 ### ======================================================================
 
-# SERVER FUNCTION
+# Load source files -------------------------------------------------------------------------------
+source("src/app_server_rnaseq.R")
+
+# SERVER FUNCTION ---------------------------------------------------------------------------------
 server <- function(input, output) {
 
   ### ----- RNA-SEQ STUFF ----- ###
@@ -13,7 +16,7 @@ server <- function(input, output) {
   # reactive input
   rna_data <- eventReactive(eventExpr = input$submit_rna, { read.delim(input$rnaseq_input$datapath) })
   
-  #observeEvent(eventExpr = input$submit_rna, {
+  observeEvent(eventExpr = input$submit_rna, {
 
     # EXPLORATION TAB ------------------------------------------------------------------------------------------------------------ 
     # table with the data of the table
@@ -31,8 +34,6 @@ server <- function(input, output) {
                      choices = contrasts, selected = NULL, multiple = T, 
                      options = list(placeholder = "Select the contrasts..."))
     })
-    
-    output$volcano_contrasts_list <- renderPrint({ input$rna_contrasts })
     
     # plot volcaons
    observeEvent(eventExpr = input$plot_volcano, {
@@ -61,7 +62,7 @@ server <- function(input, output) {
       data <- rna_data()
       contrasts <- data$Contrast %>% unique
       selectizeInput(inputId = "contrastDegs1", choices = contrasts, multiple = T, label = paste("Select the contrasts to overlap", sep = " "), 
-                    options = list(maxItems = 3, placeholder = "Select 1 contrasts..."))
+                    options = list(maxItems = 3, placeholder = "Select 2 or 3 contrasts..."))
     })
     output$rna_overlap2_contrasts <- renderUI({
       data <- rna_data()
@@ -69,10 +70,7 @@ server <- function(input, output) {
       selectizeInput(inputId = "contrastDegs2", choices = contrasts, multiple = T, label = paste("Select the contrasts to overlap", sep = " "), 
                      options = list(maxItems = 3, placeholder = "Select 2 or 3 contrasts..."))
     })
-    
-    # render verbatimTextOutputs rna_contrast1_list rna_contrast2_list
-    output$rna_contrast1_list <- renderPrint({ print(input$contrastDegs1) })
-    output$rna_contrast2_list <- renderPrint({ print(input$contrastDegs2) })
+
     
     # plot venn diagrams 1
     observeEvent(input$submit_rnaOverlaps1, {
@@ -163,7 +161,7 @@ server <- function(input, output) {
     # plot heatmap
     observeEvent(eventExpr = input$heatmap_button, {
       output$rna_heatmap <- renderPlot({
-        input$heatmap_button
+        #input$heatmap_button
         genes <- isolate(input$select_genes_heatmap)
         genes <- genes %>% stringr::str_split(pattern = " ") %>% unlist()
         l <- log2fc() %>% dplyr::filter(Geneid %in% genes)
@@ -177,7 +175,7 @@ server <- function(input, output) {
       })
     }) # observe event actionButton heatmap
         
-  #}) # observeEvent end (submit_rna file)
+  }) # observeEvent end (submit_rna file)
   
   
   ### ----- CHIP-SEQ STUFF ----- ###  

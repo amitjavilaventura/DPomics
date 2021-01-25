@@ -1,29 +1,33 @@
-### ==============================================================================================================================
+
 ### DPomics - DEPENDENCIES
 ### ==============================================================================================================================
 
 
-# ----- shiny ----- #
+# shiny -------------------------------------------------------------------------------------------
 #library(shiny)
 library(shinydashboard)
 library(shinyWidgets)
-library(shinythemes)
+#library(shinythemes)
 library(DT)
 
-# ----- tidy code ----- #
-library(tidyverse) # this loads ggplot, dplyr, stringr...
+# tidy code ---------------------------------------------------------------------------------------
+library(dplyr)
+library(stringr)
+library(purrr)
 library(magrittr)
+library(tibble)
 
-# ----- list handling ----- #
+# list handling ----------------------------------------------------------------------------------- 
 library(plyranges)
 
-# ----- plotting ----- #
-# library(ggplot) ## ggplot is loaded with tidiverse
+# plotting ---------------------------------------------------------------------------------------- 
+library(ggplot2)
 library(VennDiagram)
 library(cowplot)
 library(ComplexHeatmap)
 library(ggpubr)
 library(ChIPpeakAnno)
 library(circlize)
+library(plotly)
 
-# ----- misc ----- #
+# misc --------------------------------------------------------------------------------------------

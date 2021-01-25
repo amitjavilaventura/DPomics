@@ -1,8 +1,8 @@
-### ==============================================================================================================================
-### DPomics - FUNCTIONS RNASEQ 
-### ==============================================================================================================================
 
-## ----- Volcano Plot ----- ##
+### DPomics - FUNCTIONS RNASEQ 
+### ============================================================================================= #
+
+### Volcano Plot ----------------------------------------------------------------------------------
 volcanoPlot2 <- function(df, xlim = c(-10,10), ylim = c(0,30),
                          pval = 0.05, log2FC = 1.5,
                          main = NULL, mainSize = 9, sub = NULL, subSize = 8,
@@ -10,7 +10,7 @@ volcanoPlot2 <- function(df, xlim = c(-10,10), ylim = c(0,30),
                          xlab = bquote(~Log[2]~ "FC"), ylab = (bquote(~-Log[10]~italic(P))) , axisLabelSize = 7, axisTextSize = 7, 
                          pointColor = c("darkgreen", "gray", "red"), legendTitle = FALSE, legendPos = "bottom",
                          degsLabel = F , degsLabelNum=5, degsLabelSize = 3,
-                         ggrastr = F) {
+                         ggrastr = F, plotly = F) {
   
   #load packages
   library(ggplot2)
@@ -126,13 +126,17 @@ volcanoPlot2 <- function(df, xlim = c(-10,10), ylim = c(0,30),
     p <- p + geom_text_repel(data = degs, mapping = aes(x = log2FoldChange, y = -log10(padj), label = Geneid), size = degsLabelSize, color = "Black")
   }
   
+  if(plotly){
+    require(plotly)
+    p <- ggplotly(p)
+  }
   
   # Draw the graph.
   return(p)
   
 }
 
-## ----- annotateDEGs for a lof2FC and pvalue ----- ##
+### annotateDEGs ----------------------------------------------------------------------------------
 annotate_de <- function(degs, log2FC = 1.5, padj = 0.05){
   
   degs$DEG <- "NS"
