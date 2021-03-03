@@ -58,11 +58,13 @@ Chromosome number (i.e. chr1) | Starting position of the peak | Ending position 
 
 ## To do
 
-* Modify the pipelines to create the desired input (one rule).
+* Modify the Snakemake pipelines to create the desired input (one rule).
 * Include download options for lists and plots: `write.table()` and `ggsave()`/`png()` + `actionButton()`?
+* Include more parameters in the RNA-seq Heatmaps.
 * Put gene ontology in DEGs
-* Integrate RNAseq and ChIPseq data. --> at the moment,  the integration does not work
-* Make a Desktop app with `electron`/`photon` (2 different apps: 1 for MAC and 1 for Windows).
+* Integrate RNAseq and ChIPseq data. --> at the moment,  the integration does not work.
+* Upload app to my shinyapps.io server.
+* Make a Desktop app with `electron`/`photon` (make 2 different apps: 1 for MAC and 1 for Windows).
 
 ## CRAZY ideas
 

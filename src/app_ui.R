@@ -13,10 +13,12 @@ ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPo
                     body = dashboardBody(
                       tags$head(tags$style(HTML(".shiny-split-layout > div {overflow: visible;}"))),
                       tabItems(dpomics_ui_about,
+                               dpomics_ui_instructions,
+                               # Individual OMICS ----
                                dpomics_ui_rnaseq,
                                dpomics_ui_chipseq,
                                # INTEGRATION ----
-                               dpomics_ui_integration_rna_chip
+                               #dpomics_ui_integration_rna_chip
                                )
                       )
                     )

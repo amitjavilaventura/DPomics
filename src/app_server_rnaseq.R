@@ -1,5 +1,5 @@
 
-### DPomics SERVER FUNCTION                                          
+### DPomics SERVER FUNCTION - RNAseq                                         
 ### =========================================================================================== ###
 
 ### DPomics SERVER RNASEQ explore -----------------------------------------------------------------
@@ -14,7 +14,7 @@ server_rnaseq_explore <- function(input, output, session){
 }
 
 ### DPomics SERVER RNASEQ volcano -----------------------------------------------------------------
-server_rnaseq_volcano <- function(input, output, session){
+server_rnaseq_volcano <- function(input, output, session, data){
   
   # volcano select input -----
   output$volcano_contrasts <- renderUI({
@@ -65,7 +65,7 @@ server_rnaseq_overlap <- function(input, output, session){
                    options = list(maxItems = 3, placeholder = "Select 2 or 3 contrasts..."))
   })
   
-  # plot venn diagrams 1 -----
+  # plot venn diagrams 1 ------------------------
   observeEvent(input$submit_rnaOverlaps1, {
     
     ## upregulated genes
@@ -88,18 +88,17 @@ server_rnaseq_overlap <- function(input, output, session){
       data <- rna_data()
       data <- data %>% dplyr::filter(DEG == "Downregulated")
       list <- list()
-      for (i in 1:length(isolate(input$contrastDegs2))){
+      for (i in 1:length(isolate(input$contrastDegs1))){
         x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs1[i])) %>% dplyr::select(Geneid)
         list[[i]] <- x$Geneid
       }
-      colors <- rainbow(n = length(isolate(input$contrastDegs2)), alpha = 0.6)
-      cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs2), fill = colors))
+      colors <- rainbow(n = length(isolate(input$contrastDegs1)), alpha = 0.6)
+      cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs1), fill = colors))
     })
     
-  }) # end of plot Venns 1
+  }) # observeEvent end (actionButton generate overlaps1)
   
-  
-  # plot venn diagrams 2 -----
+  # plot venn diagrams 2 ------------------------
   observeEvent(input$submit_rnaOverlaps2, {
     
     ## upregulated genes
@@ -129,8 +128,7 @@ server_rnaseq_overlap <- function(input, output, session){
       colors <- rainbow(n = length(isolate(input$contrastDegs2)), alpha = 0.6)
       cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs2), fill = colors))
     })
-    
-  }) # end of plot Venns 2
+  }) # observeEvent end (actionButton generate overlaps2)
   
   
   # Log2FC heatmap ------

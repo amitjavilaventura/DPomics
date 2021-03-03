@@ -4,9 +4,11 @@
 
 # Load source files -------------------------------------------------------------------------------
 source("src/app_server_rnaseq.R")
+# Load source files -------------------------------------------------------------------------------
+source("src/app_server_chipseq.R")
 
 # SERVER FUNCTION ---------------------------------------------------------------------------------
-server <- function(input, output) {
+server <- function(input, output, session) {
 
   ### ----- RNA-SEQ STUFF ----- ###
   # text with the name of the file
@@ -95,12 +97,12 @@ server <- function(input, output) {
         data <- rna_data()
         data <- data %>% dplyr::filter(DEG == "Downregulated")
         list <- list()
-        for (i in 1:length(isolate(input$contrastDegs2))){
+        for (i in 1:length(isolate(input$contrastDegs1))){
           x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs1[i])) %>% dplyr::select(Geneid)
           list[[i]] <- x$Geneid
         }
-        colors <- rainbow(n = length(isolate(input$contrastDegs2)), alpha = 0.6)
-        cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs2), fill = colors))
+        colors <- rainbow(n = length(isolate(input$contrastDegs1)), alpha = 0.6)
+        cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs1), fill = colors))
       })
       
     }) # observeEvent end (actionButton generate overlaps1)
@@ -118,7 +120,7 @@ server <- function(input, output) {
           x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs2[i])) %>% dplyr::select(Geneid)
           list[[i]] <- x$Geneid
         }
-        colors <- rainbow(n = length(isolate(input$contrastDegs2), alpha = 0.6))
+        colors <- rainbow(n = length(isolate(input$contrastDegs2)), alpha = 0.6)
         cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs2), fill = colors))
       })
       

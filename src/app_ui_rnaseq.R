@@ -80,12 +80,10 @@ tabItem(tabName = "rnaseq",
                              box(title = tagList(icon("bars"), "List of DEGs"), width = 12, collapsible = T, collapsed = F,
                                  helpText("Select the genes to do the log2FC heatmap and click to 'Plot heatmap'."),
                                  uiOutput(outputId = "gene_list_heatmap"),
-                                 actionButton(inputId = "heatmap_button", label = "Plot heatmap")), 
-                             box(title = tagList(icon("gear"), "Parameters"), width = 12, collapsible = T, collapsed = F,
-                                 checkboxInput("rna_heatmap_interactive", label = "Interactive plot?", value = F))),
-                             
+                                 actionButton(inputId = "heatmap_button", label = "Plot heatmap"))),
+                         column(width = 12,   
                              HTML('<center><h3>Heatmap of Log2FCs</h3></center>'),
-                             plotOutput(outputId = "rna_heatmap")))
+                             plotOutput(outputId = "rna_heatmap"))))
                     
         ) # tabsetPanel rnaseq_tabset end
 ) # tabItem rnaseq end

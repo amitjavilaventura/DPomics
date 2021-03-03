@@ -8,6 +8,8 @@ dashboardSidebar(
   sidebarMenu(id = "menu",
               hr(),
               menuItem(text = "About", tabName = "about", icon = icon(name = "at", lib = "font-awesome")),
+              menuItem(text = "Instructions", tabName = "instructions", icon = icon(name = "info-circle", lib = "font-awesome")),
+              hr(),
               menuItem(text = "RNA-seq", tabName = "rnaseq", icon = icon(name = "dna", lib = "font-awesome")),
               menuItem(text = "ChIP-seq", tabName = "chipseq", icon = icon(name = "dna", lib = "font-awesome")),
               #menuItem(text = "Enhancers", tabName = "enhancers", icon = icon(name = "dna", lib = "font-awesome")), #not available yet

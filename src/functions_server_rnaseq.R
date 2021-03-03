@@ -9,8 +9,7 @@ volcanoPlot2 <- function(df, xlim = c(-10,10), ylim = c(0,30),
                          labelSize = 7, labelColor = c("darkgreen", "red"), labelPos = 0,
                          xlab = bquote(~Log[2]~ "FC"), ylab = (bquote(~-Log[10]~italic(P))) , axisLabelSize = 7, axisTextSize = 7, 
                          pointColor = c("darkgreen", "gray", "red"), legendTitle = FALSE, legendPos = "bottom",
-                         degsLabel = F , degsLabelNum=5, degsLabelSize = 3,
-                         ggrastr = F, plotly = F) {
+                         degsLabel = F , degsLabelNum=5, degsLabelSize = 3, plotly = F) {
   
   #load packages
   library(ggplot2)
@@ -37,24 +36,9 @@ volcanoPlot2 <- function(df, xlim = c(-10,10), ylim = c(0,30),
     dplyr::mutate(log2FoldChange = ifelse(test = log2FoldChange < xlim[1], yes = xlim[1], no = log2FoldChange))
   
   
-  # Start plot with ggrastr points. This is useful when using workflowr.
-  if(ggrastr){
-    
-    # Load ggrastr
-    library(ggrastr)
-    
-    p <- ggplot(data = na.omit(df), aes(x=log2FoldChange, y=-log10(padj), colour=DEG, shape=shape)) +
-      
-      # Draw points with geom_point_rast from ggrastr, because it will draw points as images, making the graph lighter.
-      geom_point_rast(alpha=0.7, size=1.7, raster.height = 5.15, raster.width = 6, raster.dpi = 400)
-  }
-  
-  # Start plot normally
-  else{
-    p <- ggplot(data = na.omit(df), aes(x=log2FoldChange, y=-log10(padj), colour=DEG, shape=shape)) + 
-      
+  # start create plot
+  p <- ggplot(data = na.omit(df), aes(x=log2FoldChange, y=-log10(padj), colour=DEG, shape=shape)) + 
       geom_point(alpha=0.7, size=1.7)
-  }
   
   
   # Annotate the number of up and downregulated DEGs
