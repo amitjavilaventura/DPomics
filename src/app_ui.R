@@ -18,7 +18,7 @@ ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPo
                                dpomics_ui_rnaseq,
                                dpomics_ui_chipseq,
                                # INTEGRATION ----
-                               #dpomics_ui_integration_rna_chip
+                               dpomics_ui_integration_rna_chip
                                )
                       )
                     )
