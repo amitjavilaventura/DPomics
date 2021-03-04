@@ -10,7 +10,7 @@ Shiny app to visualize RNAseq and ChIPseq data and integrate them. The data load
 
 Contrast | Geneid | log2FoldChange | padj | DEG | 
 :------: | :----: | :------------: | :--: | :-: |
-Extra column with the name of the contrasts where the gene in the corresponding row comes from | ID of the gene (i.e. Gene symbol) | log~2~(FC) | Adjusted p-value | Extra column with the differential expression of the corresponding genes, values are "Upregulated", "Downregulated", "NS".
+Extra column with the name of the contrasts where the gene in the corresponding row comes from | ID of the gene (i.e. Gene symbol) | log^2^(FC) | Adjusted p-value | Extra column with the differential expression of the corresponding genes, values are "Upregulated", "Downregulated", "NS".
 
 * ChIPseq input data comes from `annotatePeak()` with all the conditions and has the following columns (several come directly from `annotatePeak()`):
 
