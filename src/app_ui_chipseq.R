@@ -65,25 +65,26 @@ dpomics_ui_chipseq <-
                                
                                splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
                                            conditionalPanel(condition = "input.generate_chip_intersection1 > 0", plotOutput("chip_intersect1", width = 600, height = 500)),
-                                           conditionalPanel(condition = "input.generate_chip_intersection2 > 0", plotOutput("chip_intersect2", width = 600, height = 500)))),
+                                           conditionalPanel(condition = "input.generate_chip_intersection2 > 0", plotOutput("chip_intersect2", width = 600, height = 500))))#,
                       
-                      tabPanel(title = "Peaks in custom coordinates", br(),
-                               box(title = "Upload coordinates", width = 12, collapsible = T, collapsed = F,
-                                   helpText("Upload a file with a list of custom coordinates, select the parameters and click to 'Upload'."),
-                                   fileInput(inputId = "upload_coords", label = "Browse", multiple = F, buttonLabel = "Browse", placeholder = "Select a file..."),
-                                   verbatimTextOutput("uploaded_coords_name", placeholder = T),
-                                   checkboxInput("upload_coords_header", label = "Field names or header?", value = F),
-                                   conditionalPanel(condition = "input.upload_coords_header==true",
-                                                    selectInput("upload_coords_sep", label = "Field separator", selected = "Tabulation", multiple = F,
-                                                                choices = list("Tabulation" = "\t", "Space" = " ", "Comma" = ",", "Semicolon" = ";", "Colon" = ":"))),
-                                   conditionalPanel(condition = "input.upload_coords_header==false",
-                                                    helpText("Write the field/column names for the uploaded list of custom coordinates."),
-                                                    helpText("The fields corresponding to chromosome, start and end must be 'seqnames', 'start' and 'end'."),
-                                                    helpText("Use blank spaces to separate each written field name."),
-                                                    textInput(inputId = "custom_header", label = "Write the field names:", placeholder = "seqnames start end ..."))),
-                               actionButton(inputId = "upload_coords_button", label = "Upload"),
-                               
-                               DT::dataTableOutput(outputId = "coords_chip"))
+                      # PEAKS in custom coordinates
+                      #tabPanel(title = "Peaks in custom coordinates", br(),
+                      #         box(title = "Upload coordinates", width = 12, collapsible = T, collapsed = F,
+                      #             helpText("Upload a file with a list of custom coordinates, select the parameters and click to 'Upload'."),
+                      #             fileInput(inputId = "upload_coords", label = "Browse", multiple = F, buttonLabel = "Browse", placeholder = "Select a file..."),
+                      #             verbatimTextOutput("uploaded_coords_name", placeholder = T),
+                      #             checkboxInput("upload_coords_header", label = "Field names or header?", value = F),
+                      #             conditionalPanel(condition = "input.upload_coords_header==true",
+                      #                              selectInput("upload_coords_sep", label = "Field separator", selected = "Tabulation", multiple = F,
+                      #                                          choices = list("Tabulation" = "\t", "Space" = " ", "Comma" = ",", "Semicolon" = ";", "Colon" = ":"))),
+                      #             conditionalPanel(condition = "input.upload_coords_header==false",
+                      #                              helpText("Write the field/column names for the uploaded list of custom coordinates."),
+                      #                              helpText("The fields corresponding to chromosome, start and end must be 'seqnames', 'start' and 'end'."),
+                      #                              helpText("Use blank spaces to separate each written field name."),
+                      #                              textInput(inputId = "custom_header", label = "Write the field names:", placeholder = "seqnames start end ..."))),
+                      #         actionButton(inputId = "upload_coords_button", label = "Upload"),
+                      #         
+                      #         DT::dataTableOutput(outputId = "coords_chip"))
                       
                       
                       

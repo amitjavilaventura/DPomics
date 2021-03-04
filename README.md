@@ -14,9 +14,9 @@ Extra column with the name of the contrasts where the gene in the corresponding 
 
 * ChIPseq input data comes from `annotatePeak()` with all the conditions and has the following columns (several come directly from `annotatePeak()`):
 
-seqnames | startnd | end | annotation | SYMBOL | distanceToTSS | condition |
-:------: | :----: | :------------: | :--: | :-: | :-----------: | :------: |
-Chromosome number (i.e. chr1) | Starting position of the peak | Ending position of the peak | Region where the peak is annotated (i.e. Distal intergenic) | Gene symbol or any identificator of the nearest gene (i.e. Lef1) | Distance to TSS of the nearest gene | Extra column with the condition of the corresponding peak.
+seqnames | startnd | end            | annotation | SYMBOL | distanceToTSS | sample   | condition | protein   |
+:------: | :----:  | :------------: | :--:       | :-:    | :-----------: | :------: | :------:  | :------:  |
+Chromosome number (i.e. chr1) | Starting position of the peak | Ending position of the peak | Region where the peak is annotated (i.e. Distal intergenic) | Gene symbol or any identificator of the nearest gene (i.e. Lef1) | Distance to TSS of the nearest gene | Extra column with the sample of the corresponding peak, ideally should be condition_protein. | Column with the condition where the peak comes from .| Chipped protein. |
 
 
 
@@ -58,10 +58,10 @@ Chromosome number (i.e. chr1) | Starting position of the peak | Ending position 
 
 ## To do
 
-* Modify the Snakemake pipelines to create the desired input (one rule).
-* Include download options for lists and plots: `write.table()` and `ggsave()`/`png()` + `actionButton()`?
+* Modify the Snakemake pipelines to create the desired input (one rule) --> easy.
+* **Include download options for lists and plots**: `write.table()` and `ggsave()`/`png()` + `actionButton()`?
 * Include more parameters in the RNA-seq Heatmaps.
-* Put gene ontology in DEGs
+* Put gene ontology in DEGs --> will be very slow using `clusterProfiler`.
 * Integrate RNAseq and ChIPseq data. --> at the moment,  the integration does not work.
 * Upload app to my shinyapps.io server.
 * Make a Desktop app with `electron`/`photon` (make 2 different apps: 1 for MAC and 1 for Windows).
