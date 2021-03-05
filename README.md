@@ -70,4 +70,10 @@ Chromosome number (i.e. chr1) | Starting position of the peak | Ending position 
 
 * Allow more omics data, like ChIPs from histone modifications (i.e. H3K4me1, H3K4me3, H3K27me3, H3K27ac), so we will able to predict some enhancers.
 * Integrate all the data with the preexisting one. It can be done in R, so it should not be difficult
-  
+ 
+---
+
+<center>
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">
+Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.
+</center>
