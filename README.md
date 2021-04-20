@@ -1,6 +1,8 @@
-# Shiny DP <img src="www/DPomics_logo.png" align="right" alt="" width="250" />
+# MYomics <img src="www/MYomics.png" align="right" alt="" width="250" />
 
-_**DPomics**_: **DP** lab **omics** visualization and integration
+_**MYomics**_: **MY** shiny app for **omics** data visualization and integration.
+
+Formerly _**DPomics**_: **DP** lab **omics** visualization and integration.
 
 ## Goal
 
