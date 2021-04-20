@@ -4,7 +4,6 @@ _**MYomics**_: **MY** shiny app for **omics** data visualization and integration
 
 Formerly _**DPomics**_: **DP** lab **omics** visualization and integration.
 
- 
 ---
 
 <center>
