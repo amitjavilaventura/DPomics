@@ -1,11 +1,11 @@
 ### ======================================================================
-### DPomics SERVER FUNCTION
+### MYomics SERVER FUNCTION
 ### ======================================================================
 
-# Load source files -------------------------------------------------------------------------------
+# Load server modules -------------------------------------------------------------------------------
 source("src/app_server_rnaseq.R")
-# Load source files -------------------------------------------------------------------------------
 source("src/app_server_chipseq.R")
+source("src/app_server_atacseq.R")
 
 # SERVER FUNCTION ---------------------------------------------------------------------------------
 server <- function(input, output, session) {
@@ -51,7 +51,26 @@ server <- function(input, output, session) {
     #server_chipseq_custom_coords(input, output, session, data = chip_data())
     
   })
+
+  ### ----- ATAC-SEQ STUFF ----- ###  
+  # text with the name of the input file
+  output$atacseq_inputFile <- renderPrint({ input$atac_input$name })
   
-  ## INTEGRATION RNASEQ+CHIPSEQ --> LOOK AT THE APP_SERVER2.R IN THE ZZ_OLD_SRC --> MUST BE UPDATED AND IMPROVED
+  # read peaks file
+  atac_data <- eventReactive(eventExpr = input$submit_atac, { read.delim(input$atac_input$datapath) })
   
+  observeEvent(eventExpr = input$submit_atac, {
+    
+    ### EXPLORATION TAB
+    server_atacseq_explore(input, output, session, data = atac_data())
+    ### PEAKS TAB
+    server_atacseq_peaks(input, output, session, data = atac_data())
+    ### INTERSECTIONS TAB
+    server_atacseq_intersections(input, output, session, data = atac_data())
+    ### CUSTOM COORDINATES TAB
+    #server_atacseq_custom_coords(input, output, session, data = atac_data())
+    
+  })
+  
+
 } ## SERVER FUNCTION END

@@ -14,14 +14,6 @@ server_chipseq_explore <- function(input, output, session, data){
 ### PEAKS TAB -----
 server_chipseq_peaks <- function(input, output, session, data){
   ### PEAKS TAB ----------------------------------------------------------------------------------------------------------
-  # number of peaks
-  observeEvent(eventExpr = input$generate_chipPeaks, {
-    # plot number of peaks
-    output$chip_peaks <- renderPlot({
-      peakNum(data = data, legend_position = isolate(input$chip_peaks_legend), pannel = isolate(input$chip_peaks_pannel))
-    })
-  }) # ovserveEvent end (actionButton generate_peaks)
-  
   # annotation (distal/promo) 
   observeEvent(eventExpr = input$generate_chipAnno, {
     # plot distribution of peaks
@@ -40,29 +32,14 @@ server_chipseq_intersections <- function(input, output, session, data){
     samples <- data$sample %>% unique
     selectizeInput(inputId = "chip_conditions1", label = "Select the conditions to overlap the peaks",
                    choices = samples, selected = NULL, multiple = T, 
-                   options = list(maxItems = 3, placeholder = "Select between 2 and 3 conditions"))
+                   options = list(maxItems = 3, placeholder = "Select the conditions to overlap"))
   })
   output$chip_cond_list1 <- renderPrint({ paste(input$chip_conditions1, sep = "; ") })
-  
-  output$ui_chip_intersect2 <- renderUI({
-    samples <- data$sample %>% unique
-    selectizeInput(inputId = "chip_conditions2", label = "Select the conditions to overlap the peaks",
-                   choices = samples, selected = NULL, multiple = T, 
-                   options = list(maxItems = 3, placeholder = "Select between 2 and 3 conditions"))
-  })
-  
-  output$chip_cond_list2 <- renderPrint({ paste(input$chip_conditions2, sep = "; ") })
   
   # plot intersections
   observeEvent(eventExpr = input$generate_chip_intersection1, {
     output$chip_intersect1 <- renderPlot({
       intersectPeaks(peaks = data, conditions = isolate(input$chip_conditions1))
-    })
-  })
-  
-  observeEvent(eventExpr = input$generate_chip_intersection2, {
-    output$chip_intersect2 <- renderPlot({
-      intersectPeaks(peaks = data, conditions = isolate(input$chip_conditions2))
     })
   })
 }

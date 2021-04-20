@@ -1,8 +1,8 @@
 
-### DPomics USER INTERFACE                                                 
+### MYomics USER INTERFACE                                                 
 ### =========================================================================================== ###
 
-### DPomics UI rnaseq -----------------------------------------------------------------------------
+### MYomics UI rnaseq -----------------------------------------------------------------------------
 
 dpomics_ui_rnaseq <- 
 tabItem(tabName = "rnaseq",
@@ -19,7 +19,7 @@ tabItem(tabName = "rnaseq",
                                          box(title = "DE thresholds", id = "rna_thresholds", height = "300px", width = 12, collapsible = T, collapsed = F,
                                              helpText("Select the thresholds for log2FC and adjusted p-value"),
                                              sliderInput(inputId = "rna_log2fc", label = "Select a log2FC threshold", min = 0, max = 3, value = 1.5, step = 0.5, ticks = T),
-                                             sliderInput(inputId = "rna_padj", label = "Select an adjusted p-value threshold", min = 0, max = 0.05, value = 0.1, ticks = T))),
+                                             sliderInput(inputId = "rna_padj", label = "Select an adjusted p-value threshold", min = 0, max = 0.1, value = 0.05, ticks = T))),
                              
                              br(),
                              conditionalPanel(condition = "input.submit_rna > 0",
@@ -56,23 +56,17 @@ tabItem(tabName = "rnaseq",
                              br(),
                              splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
                                          box(title = "Overlap 1", id = "overlap_contrasts", height = "300px", width = 12, collapsible = T, collapsed = F,
-                                             helpText("Select 2 or 3 contrasts to overlap their DEGs and click to 'Plot overlaps'."), 
+                                             helpText("Select the contrasts whose DEGs to overlap."), 
                                              uiOutput(outputId = "rna_overlap1_contrasts"),
-                                             actionButton("submit_rnaOverlaps1", "Plot overlaps")),
-                                         
-                                         box(title = "Overlap 2", id = "overlap_contrasts", height = "300px", width = 12,
-                                             helpText("Select 2 or 3 contrasts to overlap their DEGs and click to 'Plot overlaps'."), 
-                                             uiOutput(outputId = "rna_overlap2_contrasts"),
-                                             actionButton("submit_rnaOverlaps2", "Plot overlaps"))),
+                                             actionButton("submit_rnaOverlaps1", "Plot overlaps"))),
                              
-                             HTML('<center><h3>Upregulated genes</h3></center>'),
                              splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
-                                         plotOutput(outputId = "updegs_overlaps1", width = 600, height = 600), 
-                                         plotOutput(outputId = "updegs_overlaps2", width = 600, height = 600)),
-                             HTML('<center><h3>Downregulated genes</h3></center>'),
+                                         HTML('<center><h3>Upregulated genes</h3></center>'), 
+                                         HTML('<center><h3>Downregulated genes</h3></center>')),
+                            
                              splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
-                                         plotOutput(outputId = "downdegs_overlaps1", width = 600, height = 600), 
-                                         plotOutput(outputId = "downdegs_overlaps2", width = 600, height = 600))),
+                                         plotOutput(outputId = "updegs_overlaps1", width = "100%", height = 600), 
+                                         plotOutput(outputId = "downdegs_overlaps1", width = "100%", height = 600))),
                     # HEATMAPS
                     tabPanel(title = "Heatmaps",
                       splitLayout(cellWidths = c("25%", "75%"),  cellArgs = list(style='white-space: normal;'),

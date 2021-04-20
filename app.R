@@ -11,7 +11,6 @@ source("src/dependencies.R")
 # Load custom function
 source("src/functions_server_rnaseq.R")
 source("src/functions_server_chipseq.R")
-source("src/functions_server_integrate_rnachip.R")
 source("src/functions_ui.R")
 
 # Load USER INTERFACE

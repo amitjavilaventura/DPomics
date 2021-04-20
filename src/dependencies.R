@@ -19,7 +19,7 @@ library(purrr)
 library(magrittr)
 library(tibble)
 
-# list handling ----------------------------------------------------------------------------------- 
+# tanges stuff ------------------------------------------------------------------------------------ 
 library(plyranges)
 
 # plotting ---------------------------------------------------------------------------------------- 
@@ -28,6 +28,7 @@ library(VennDiagram)
 library(cowplot)
 library(ComplexHeatmap)
 library(ggpubr)
+library(ggvenn)
 library(ChIPpeakAnno)
 library(circlize)
 library(plotly)

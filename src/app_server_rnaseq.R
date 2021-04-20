@@ -26,7 +26,7 @@ server_rnaseq_volcano <- function(input, output, session, data){
   
   # plot volcaons
   observeEvent(eventExpr = input$plot_volcano, {
-    output$ui_rna_volcanos <- renderUI({ plotOutput(outputId = "rna_volcanos", width = 1200, height = isolate(input$volcanosHeight)) })
+    output$ui_rna_volcanos <- renderUI({ plotOutput(outputId = "rna_volcanos", width = "100%", height = isolate(input$volcanosHeight)) })
     output$rna_volcanos <- renderPlot({
       input$plot_volcano
       degs <- annotate_de(degs = data, log2FC = isolate(input$rna_log2fc), padj = isolate(input$rna_padj))
@@ -68,11 +68,12 @@ server_rnaseq_overlap <- function(input, output, session, data){
       data <- data %>% dplyr::filter(DEG == "Upregulated")
       list <- list()
       for (i in 1:length(isolate(input$contrastDegs1))){
-        x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs1[i])) %>% dplyr::select(Geneid)
-        list[[i]] <- x$Geneid
+        name <- isolate(input$contrastDegs1[i])
+        x <- data %>% dplyr::filter(Contrast == name) %>% dplyr::select(Geneid)
+        list[[name]] <- x$Geneid
       }
       colors <- rainbow(n = length(isolate(input$contrastDegs1)), alpha = 0.6)
-      cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs1), fill = colors))
+      ggvenn(data = list, fill_color = colors, digits = 2, stroke_color = "black", set_name_color = "black")
     })
     
     ## downregulated genes
@@ -80,42 +81,16 @@ server_rnaseq_overlap <- function(input, output, session, data){
       data <- data %>% dplyr::filter(DEG == "Downregulated")
       list <- list()
       for (i in 1:length(isolate(input$contrastDegs1))){
-        x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs1[i])) %>% dplyr::select(Geneid)
-        list[[i]] <- x$Geneid
+        name <- isolate(input$contrastDegs1[i])
+        x <- data %>% dplyr::filter(Contrast == name) %>% dplyr::select(Geneid)
+        list[[name]] <- x$Geneid
       }
       colors <- rainbow(n = length(isolate(input$contrastDegs1)), alpha = 0.6)
-      cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs1), fill = colors))
+      ggvenn(data = list, fill_color = colors, digits = 2, stroke_color = "black", set_name_color = "black")
     })
     
   }) # observeEvent end (actionButton generate overlaps1)
   
-  # plot venn diagrams 2
-  observeEvent(input$submit_rnaOverlaps2, {
-    
-    ## upregulated genes
-    output$updegs_overlaps2 <- renderPlot({
-      data <- data %>% dplyr::filter(DEG == "Upregulated")
-      list <- list()
-      for (i in 1:length(isolate(input$contrastDegs2))){
-        x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs2[i])) %>% dplyr::select(Geneid)
-        list[[i]] <- x$Geneid
-      }
-      colors <- rainbow(n = length(isolate(input$contrastDegs2)), alpha = 0.6)
-      cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs2), fill = colors))
-    })
-    
-    ## downregulated genes
-    output$downdegs_overlaps2 <- renderPlot({
-      data <- data %>% dplyr::filter(DEG == "Downregulated")
-      list <- list()
-      for (i in 1:length(isolate(input$contrastDegs2))){
-        x <- data %>% dplyr::filter(Contrast == isolate(input$contrastDegs2[i])) %>% dplyr::select(Geneid)
-        list[[i]] <- x$Geneid
-      }
-      colors <- rainbow(n = length(isolate(input$contrastDegs2)), alpha = 0.6)
-      cowplot::plot_grid(venn.diagram(filename = NULL, x = list, category.names = isolate(input$contrastDegs2), fill = colors))
-    })
-  }) # observeEvent end (actionButton generate overlaps2)
 }
 
 ### DPomics SERVER RNASEQ heatmap -----------------------------------------------------------------

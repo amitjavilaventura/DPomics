@@ -1,14 +1,14 @@
 ### ====================================================================== ###
-### DPomics USER INTERFACE                                                 ###
+### MTomics USER INTERFACE                                                 ###
 ### ====================================================================== ###
 
 source("src/app_ui_sidebar.R")
 source("src/app_ui_about.R")
 source("src/app_ui_rnaseq.R")
 source("src/app_ui_chipseq.R")
-source("src/app_ui_integration_rna_chip.R")
+source("src/app_ui_atacseq.R")
 
-ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPomics", skin = "blue",
+ui <- dashboardPage(header  = dashboardHeader(title = "MYomics"), title   = "MYomics", skin = "blue",
                     sidebar = dpomics_ui_sidebar,
                     body = dashboardBody(
                       tags$head(tags$style(HTML(".shiny-split-layout > div {overflow: visible;}"))),
@@ -17,8 +17,7 @@ ui <- dashboardPage(header  = dashboardHeader(title = "DPomics"), title   = "DPo
                                # Individual OMICS ----
                                dpomics_ui_rnaseq,
                                dpomics_ui_chipseq,
-                               # INTEGRATION ----
-                               dpomics_ui_integration_rna_chip
+                               dpomics_ui_atacseq
                                )
                       )
                     )
