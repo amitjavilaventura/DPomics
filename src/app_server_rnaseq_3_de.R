@@ -73,7 +73,8 @@ server_rnaseq_overlap <- function(input, output, session, data){
         list[[name]] <- x$Geneid
       }
       colors <- rainbow(n = length(isolate(input$contrastDegs1)), alpha = 0.6)
-      ggvenn(data = list, fill_color = colors, digits = 2, stroke_color = "black", set_name_color = "black")
+      ggvenn(data = list, fill_color = colors, digits = 2, stroke_color = "black", 
+             set_name_color = "black", show_percentage = isolate(input$rna_overlap_percent))
     })
     
     ## downregulated genes
