@@ -16,6 +16,8 @@ ui <- dashboardPage(header  = dashboardHeader(title = "MYomics"), title   = "MYo
                                dpomics_ui_instructions,
                                # Individual OMICS ----
                                ## RNA-seq
+                               dpomics_ui_rnaseq_pca, # principal component analysis
+                               dpomics_ui_rnaseq_geneexp, # gene expression
                                dpomics_ui_rnaseq_de, ## differential expression
                                
                                ## ChIP-seq

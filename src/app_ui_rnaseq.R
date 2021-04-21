@@ -2,12 +2,20 @@
 ### MYomics USER INTERFACE                                                 
 ### =========================================================================================== ###
 
-### MYomics UI RNA-seq Diff Exp -------------------------------------------------------------------
+### MYomics UI RNA-seq Principal Component -------------------------------------------------------------------
+dpomics_ui_rnaseq_pca <- 
+  tabItem(tabName = "rnaseq_pca")
 
+### MYomics UI RNA-seq Gene Exp -------------------------------------------------------------------
+dpomics_ui_rnaseq_geneexp <- 
+tabItem(tabName = "rnaseq_geneexp")
+
+
+### MYomics UI RNA-seq Diff Exp -------------------------------------------------------------------
 dpomics_ui_rnaseq_de <- 
 tabItem(tabName = "rnaseq_diffexp",
-        h3("RNA-seq"),
-        tabsetPanel(id = "rnaseq_tabset", type = "pills",
+        h3("RNA-seq - Differential expression analysis"),
+        tabsetPanel(id = "rnaseq_de_tabset", type = "pills",
                     # EXPLORE THE DATA
                     tabPanel(title = "Upload & explore", value = "explore", br(),
                              splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
@@ -54,11 +62,10 @@ tabItem(tabName = "rnaseq_diffexp",
                     # OVERLAP DEGS
                     tabPanel(title = "Overlap DEGs", value = "overlap_degs",
                              br(),
-                             splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
-                                         box(title = "Overlap 1", id = "overlap_contrasts", height = "300px", width = 12, collapsible = T, collapsed = F,
-                                             helpText("Select the contrasts whose DEGs to overlap."), 
-                                             uiOutput(outputId = "rna_overlap1_contrasts"),
-                                             actionButton("submit_rnaOverlaps1", "Plot overlaps"))),
+                             box(title = "Overlap 1", id = "overlap_contrasts", height = "300px", width = 12, collapsible = T, collapsed = F,
+                                 helpText("Select the contrasts whose DEGs to overlap."), 
+                                 uiOutput(outputId = "rna_overlap1_contrasts"),
+                                 actionButton("submit_rnaOverlaps1", "Plot overlaps")),
                              
                              splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
                                          HTML('<center><h3>Upregulated genes</h3></center>'), 

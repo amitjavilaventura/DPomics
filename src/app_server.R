@@ -3,7 +3,7 @@
 ### ======================================================================
 
 # Load server modules -------------------------------------------------------------------------------
-source("src/app_server_rnaseq.R")
+source("src/app_server_rnaseq_3_de.R")
 source("src/app_server_chipseq.R")
 source("src/app_server_atacseq.R")
 
