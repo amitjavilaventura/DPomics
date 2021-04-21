@@ -2,10 +2,10 @@
 ### MYomics USER INTERFACE                                                 
 ### =========================================================================================== ###
 
-### MYomics UI rnaseq -----------------------------------------------------------------------------
+### MYomics UI RNA-seq Diff Exp -------------------------------------------------------------------
 
-dpomics_ui_rnaseq <- 
-tabItem(tabName = "rnaseq",
+dpomics_ui_rnaseq_de <- 
+tabItem(tabName = "rnaseq_diffexp",
         h3("RNA-seq"),
         tabsetPanel(id = "rnaseq_tabset", type = "pills",
                     # EXPLORE THE DATA

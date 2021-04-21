@@ -15,8 +15,13 @@ ui <- dashboardPage(header  = dashboardHeader(title = "MYomics"), title   = "MYo
                       tabItems(dpomics_ui_about,
                                dpomics_ui_instructions,
                                # Individual OMICS ----
-                               dpomics_ui_rnaseq,
+                               ## RNA-seq
+                               dpomics_ui_rnaseq_de, ## differential expression
+                               
+                               ## ChIP-seq
                                dpomics_ui_chipseq,
+                               
+                               ## ATAC-seq
                                dpomics_ui_atacseq
                                )
                       )
