@@ -8,7 +8,29 @@ dpomics_ui_rnaseq_pca <-
 
 ### MYomics UI RNA-seq Gene Exp -------------------------------------------------------------------
 dpomics_ui_rnaseq_geneexp <- 
-tabItem(tabName = "rnaseq_geneexp")
+tabItem(tabName = "rnaseq_geneexp", 
+        h3("RNA-seq - Gene expression"),
+        tabsetPanel(id = "rnaseq_geneexp_tabset", type = "pills",
+                    # EXPLORE THE DATA
+                    tabPanel(title = "Upload & explore", value = "explore_genexp", br(),
+                             splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
+                                         box(title = "TPM inputs", id = "rna_ge_inputs_box", height = "300px", width = 12, collapsible = T, collapsed = F,
+                                             helpText("Select the input for the gene expression (tipically TPM, FPKM, DESeq2-normalized counts...) data visualization and click to 'Upload'."),
+                                             fileInput(inputId = "geneexp_input", label = "Browse", placeholder = "Select a file..."),
+                                             verbatimTextOutput(outputId = "geneexp_inputFile", placeholder = T),
+                                             actionButton(inputId = "submit_geeneexp", label = "Upload")),
+                                         box(title = "TPM means", id = "tpm_means", height = "300px", width = 12, collapsible = T, collapsed = F,
+                                             actionButton(inputId = "submit_geeneexp_means", label = "Do means"))),
+                             
+      
+                              conditionalPanel(condition = "input.submit_geeneexp > 0",
+                                               h3("Explore the gene expression!"),
+                                               helpText("This is a data table with all the TPM information. Write a gene inside the search box to see its TPM data in all conditions"),
+                                               DT::dataTableOutput("rna_tpm_dataTable")),
+                              conditionalPanel(condition = "submit_geeneexp_means > 0",
+                                               h3("Explore thee mean expression!"),
+                                               helpText("This is a data table with all the TPM mean information. Write a gene inside the search box to see its TPM mean data in all condition"),
+                                               DT::dataTableOutput("rna_tpm_means_DT")))))
 
 
 ### MYomics UI RNA-seq Diff Exp -------------------------------------------------------------------
@@ -17,9 +39,9 @@ tabItem(tabName = "rnaseq_diffexp",
         h3("RNA-seq - Differential expression analysis"),
         tabsetPanel(id = "rnaseq_de_tabset", type = "pills",
                     # EXPLORE THE DATA
-                    tabPanel(title = "Upload & explore", value = "explore", br(),
+                    tabPanel(title = "Upload & explore", value = "explor_de", br(),
                              splitLayout(cellWidths = c("50%", "50%"),  cellArgs = list(style='white-space: normal;'),
-                                         box(title = "RNA-seq inputs", id = "rna_inputs_box", height = "300px", width = 12, collapsible = T, collapsed = F,
+                                         box(title = "DE inputs", id = "rna_inputs_box", height = "300px", width = 12, collapsible = T, collapsed = F,
                                              helpText("Select the input for the RNAseq data visualization and click to 'Upload'."),
                                              fileInput(inputId = "rnaseq_input", label = "Browse", placeholder = "Select a file..."),
                                              verbatimTextOutput(outputId = "rnaseq_inputFile", placeholder = T),

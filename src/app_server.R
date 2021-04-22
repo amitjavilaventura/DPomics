@@ -3,6 +3,7 @@
 ### ======================================================================
 
 # Load server modules -------------------------------------------------------------------------------
+source("src/app_server_rnaseq_2_ge.R")
 source("src/app_server_rnaseq_3_de.R")
 source("src/app_server_chipseq.R")
 source("src/app_server_atacseq.R")
@@ -11,6 +12,24 @@ source("src/app_server_atacseq.R")
 server <- function(input, output, session) {
 
   ### ----- RNA-SEQ STUFF -----
+  
+  #### ----- GENE EXPRESSION -----
+  # text with the name of the file
+  output$geneexp_inputFile <- renderPrint({ input$geneexp_input$name })
+  
+  # INPUTS
+  # reactive input
+  geneexp_data <- eventReactive(eventExpr = input$submit_geeneexp, { read.delim(input$geneexp_input$datapath) })
+  
+  observeEvent(eventExpr = input$submit_geeneexp, {
+    
+    # EXPLORATION TAB 
+    server_geneexp_explore(input, output, session, data = geneexp_data())
+    
+    }) 
+  
+  
+  #### ----- DIFF EXPRESSION -----
   # text with the name of the file
   output$rnaseq_inputFile <- renderPrint({ input$rnaseq_input$name })
   
